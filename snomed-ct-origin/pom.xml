@@ -11,7 +11,7 @@
     <artifactId>snomed-ct-origin</artifactId>
     <packaging>pom</packaging>
 
-    <name>Snomed CT Origin</name>
+    <name>Snomed CT: Origin</name>
 
     <build>
         <plugins>
@@ -110,7 +110,6 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>origin-data.zip</file>
                                     <type>zip</type>
                                 </artifact>
                             </artifacts>

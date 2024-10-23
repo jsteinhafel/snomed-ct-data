@@ -10,17 +10,46 @@
 
     <artifactId>snomed-ct-starter-data</artifactId>
 
-    <name>snomed-ct-starter-data</name>
+    <name>SNOMED CT: Starter Data</name>
 
     <dependencies>
-        <dependency>
-            <groupId>dev.ikm.tinkar</groupId>
-            <artifactId>composer</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>dev.ikm.tinkar</groupId>-->
+<!--            <artifactId>composer</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>dev.ikm.tinkar</groupId>-->
+<!--            <artifactId>terms</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-test-data</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>dev.ikm.tinkar.data</groupId>
+                                    <artifactId>tinkar-starter-data-reasoned</artifactId>
+                                    <version>${tinkar-starter-data.version}</version>
+                                    <classifier>pb</classifier>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/data</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>dev.ikm.maven</groupId>
                 <artifactId>tinkar-maven-plugin</artifactId>
@@ -32,6 +61,17 @@
                         </goals>
                         <configuration>
                             <datastoreDirectory>${project.build.directory}/datastore</datastoreDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>load-data</id>
+                        <goals>
+                            <goal>load-data</goal>
+                        </goals>
+                        <configuration>
+                            <dataFiles>
+                                <dataFile>${project.build.directory}/data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
+                            </dataFiles>
                         </configuration>
                     </execution>
                     <execution>
@@ -48,12 +88,17 @@
                 <executions>
                     <execution>
                         <phase>compile</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
                         <configuration>
                             <mainClass>dev.ikm.snomedct.starter.data.StarterData</mainClass>
+                            <addResourcesToClasspath>true</addResourcesToClasspath>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+        <!-- TODO - create profiles to handle reasoning and owl transformation -->
         </plugins>
     </build>
 </project>
