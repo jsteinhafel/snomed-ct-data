@@ -12,7 +12,6 @@
     <name>SNOMED CT Data</name>
 
     <modules>
-        <module>snomed-ct-starter-data</module>
         <module>snomed-ct-origin</module>
     </modules>
 
@@ -20,6 +19,8 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <log4j.version>3.0.0-alpha1</log4j.version>
 
         <!-- maven plugins -->
         <maven-artifacts.version>1.6.0-SNAPSHOT</maven-artifacts.version>
@@ -52,6 +53,31 @@
                 <groupId>dev.ikm.tinkar</groupId>
                 <artifactId>terms</artifactId>
                 <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>entity-provider</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>executor-provider</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>search-provider</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>data-spinedarray-provider</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -97,5 +123,4 @@
             </plugins>
         </pluginManagement>
     </build>
-    
 </project>
