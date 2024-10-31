@@ -39,7 +39,7 @@
         <!-- starter data -->
         <composer.version>1.5.0</composer.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
-        <tinkar-core.version>1.72.0</tinkar-core.version>
+        <tinkar-core.version>1.76.0</tinkar-core.version>
     </properties>
 
     <dependencyManagement>
