@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>dev.ikm.snomedct</groupId>
+        <artifactId>snomed-ct-data</artifactId>
+        <version>US_PRODUCTION_US1000124_20240901T120000Z-SNAPSHOT</version>
+    </parent>
+
+    <groupId>dev.ikm.maven</groupId>
+    <artifactId>snomed-ct-binding</artifactId>
+    <packaging>jar</packaging>
+
+    <name>snomed-ct-binding</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
