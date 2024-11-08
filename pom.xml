@@ -33,6 +33,8 @@
         <build-helper-maven-plugin.version>3.5.0</build-helper-maven-plugin.version>
         <exec-maven-plugin.version>3.4.1</exec-maven-plugin.version>
         <maven-dependency-plugin.version>3.8.0</maven-dependency-plugin.version>
+        <maven-plugin-annotations.version>3.13.0</maven-plugin-annotations.version>
+        <maven-plugin-api.version>3.9.7</maven-plugin-api.version>
 
         <!-- origin -->
         <origin.working.directory>${project.build.directory}/origin-sources</origin.working.directory>
@@ -49,6 +51,17 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven-plugin-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-annotations</artifactId>
+                <version>${maven-plugin-annotations.version}</version>
+            </dependency>
             <dependency>
                 <groupId>dev.ikm.tinkar</groupId>
                 <artifactId>composer</artifactId>
@@ -80,9 +93,19 @@
                 <version>${tinkar-core.version}</version>
             </dependency>
             <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>common</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-slf4j2-impl</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>datastore-proxy</artifactId>
+                <version>1.6.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -124,6 +147,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>dev.ikm.maven</groupId>
+                    <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
+                    <version>US_PRODUCTION_US1000124_20240901T120000Z-SNAPSHOT</version>
                 </plugin>
             </plugins>
         </pluginManagement>
