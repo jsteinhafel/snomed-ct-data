@@ -69,6 +69,11 @@
             </dependency>
             <dependency>
                 <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>coordinate</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
                 <artifactId>terms</artifactId>
                 <version>${tinkar-core.version}</version>
             </dependency>
