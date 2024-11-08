@@ -39,14 +39,14 @@ public class SnomedStarterDataMojo extends AbstractMojo
     {
         try (DatastoreProxy datastoreProxy =  new DatastoreProxy()) {
 
-//            File datastore = new File("/Users/jsteinhafel/Solor/generated-data");
-//
-//            CachingService.clearAll();
-//            ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
-//            PrimitiveData.selectControllerByName("Open SpinedArrayStore");
-//            PrimitiveData.start();
+            File datastore = new File("/Users/jsteinhafel/Solor/generated-data");
 
-            datastoreProxy.open();
+            CachingService.clearAll();
+            ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
+            PrimitiveData.selectControllerByName("Open SpinedArrayStore");
+            PrimitiveData.start();
+
+//            datastoreProxy.open();
 
             Composer composer = new Composer("Snomed Starter Data Composer");
 
@@ -111,7 +111,7 @@ public class SnomedStarterDataMojo extends AbstractMojo
                     )
             );
             composer.commitSession(session);
-//            PrimitiveData.stop();
+            PrimitiveData.stop();
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to execute class", e);
         }
