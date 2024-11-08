@@ -9,7 +9,7 @@
 
     <groupId>dev.ikm.maven</groupId>
     <artifactId>snomed-ct-starterdata</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>snomed-ct-starterdata</name>
     <url>http://maven.apache.org</url>
@@ -18,12 +18,64 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-test-data</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>dev.ikm.tinkar.data</groupId>
+                                    <artifactId>tinkar-starter-data-reasoned</artifactId>
+                                    <version>1.0.0</version>
+                                    <classifier>pb</classifier>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/data</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>tinkar-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>load-data</id>
+                        <goals>
+                            <goal>load-data</goal>
+                        </goals>
+                        <configuration>
+                            <dataFiles>
+                                <dataFile>${project.build.directory}/data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
+                            </dataFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>run-snomed-starterdata</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run-snomed-starterdata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
