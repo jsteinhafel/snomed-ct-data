@@ -2,10 +2,12 @@ package dev.ikm.tinkar.snomedct.integration;
 
 
 import dev.ikm.tinkar.common.id.PublicId;
+import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
+import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.Calculators;
 import dev.ikm.tinkar.coordinate.stamp.calculator.Latest;
@@ -43,26 +45,27 @@ public class DescriptionSemanticIT {
     }
 
     @Test
-    public void testSemantic() {
-        String expectedFqn = "Chronic lung disease (disorder)";
+    public void testSingleSynonym() {
+        String expectedSynonym = "Synonym";
+        UUID regularNameDescriptionId = UuidUtil.fromSNOMED("900000000000013009");
 
-        UUID chronicLungDiseaseId = UUID.fromString("23e07078-f1e2-3f6a-9b7a-9397bcd91cfe");
-        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(chronicLungDiseaseId);
 
+        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(regularNameDescriptionId);
+
+        //getting latest of description pattern
         StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
         PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
 
-        AtomicReference<SemanticEntityVersion> fqnVersion = new AtomicReference<>();
+        AtomicReference<SemanticEntityVersion> synonymVersion = new AtomicReference<>();
         EntityService.get().forEachSemanticForComponentOfPattern(cldEntity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
             Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
             Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
-            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE)) {
-                fqnVersion.set(latestDescriptionSemantic.get());
+            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE)) {
+                synonymVersion.set(latestDescriptionSemantic.get());
             }
         });
+        String actualSynonym = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, synonymVersion.get());
 
-        String actualFqn = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, fqnVersion.get());
-
-        assertEquals(expectedFqn, actualFqn);
+        assertEquals(expectedSynonym, actualSynonym);
     }
 }
