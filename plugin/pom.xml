@@ -35,10 +35,10 @@
             <groupId>dev.ikm.tinkar</groupId>
             <artifactId>composer</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>dev.ikm.maven</groupId>
             <artifactId>datastore-proxy</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>dev.ikm.tinkar</groupId>
             <artifactId>data-spinedarray-provider</artifactId>
