@@ -65,8 +65,6 @@ public class DescriptionSemanticIT {
                 }
             }
         });
-        if (!matchFound.get()){
-            assertTrue(matchFound.get(), "No synonym found: " + expectedSynonym);
-        }
+        assertTrue(matchFound.get(), "No synonym found: " + expectedSynonym);
     }
 }
