@@ -22,11 +22,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+
 
 
 public class DescriptionSemanticIT {
@@ -55,7 +52,6 @@ public class DescriptionSemanticIT {
         StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
         PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
 
-        AtomicReference<SemanticEntityVersion> synonymVersion = new AtomicReference<>();
         AtomicBoolean matchFound = new AtomicBoolean(false);
         EntityService.get().forEachSemanticForComponentOfPattern(cldEntity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
 
@@ -63,18 +59,14 @@ public class DescriptionSemanticIT {
             Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
 
             if (PublicId.equals(descriptionType.publicId(), TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE)) {
-                synonymVersion.set(latestDescriptionSemantic.get());
-                String actualSynonym=synonymVersion.get().fieldValues().get(1).toString();
-
+                String actualSynonym = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, latestDescriptionSemantic.get());
                 if (actualSynonym.equals(expectedSynonym)) {
                     matchFound.set(true);
-                    assertTrue(true, "synonym found for " + expectedSynonym);
                 }
-
             }
         });
         if (!matchFound.get()){
-            fail("No synonym found: " + expectedSynonym);
+            assertTrue(matchFound.get(), "No synonym found: " + expectedSynonym);
         }
     }
 }
