@@ -19,12 +19,12 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class DescriptionSemanticIT {
 
@@ -43,26 +43,28 @@ public class DescriptionSemanticIT {
     }
 
     @Test
-    public void testSemantic() {
-        String expectedFqn = "Chronic lung disease (disorder)";
+    public void testSingleSynonym() {
+        String expectedSynonym = "Tumor of pancreas";
+        UUID regularNameDescriptionId = UUID.fromString("d7da4d59-8bdf-38cf-b863-c657c35a284e");
 
-        UUID chronicLungDiseaseId = UUID.fromString("23e07078-f1e2-3f6a-9b7a-9397bcd91cfe");
-        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(chronicLungDiseaseId);
 
+        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(regularNameDescriptionId);
         StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
         PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
 
-        AtomicReference<SemanticEntityVersion> fqnVersion = new AtomicReference<>();
+        AtomicBoolean matchFound = new AtomicBoolean(false);
         EntityService.get().forEachSemanticForComponentOfPattern(cldEntity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
+
             Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
             Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
-            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE)) {
-                fqnVersion.set(latestDescriptionSemantic.get());
+
+            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE)) {
+                String actualSynonym = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, latestDescriptionSemantic.get());
+                if (actualSynonym.equals(expectedSynonym)) {
+                    matchFound.set(true);
+                }
             }
         });
-
-        String actualFqn = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, fqnVersion.get());
-
-        assertEquals(expectedFqn, actualFqn);
+        assertTrue(matchFound.get(), "No synonym found: " + expectedSynonym);
     }
 }
