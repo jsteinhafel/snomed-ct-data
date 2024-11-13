@@ -23,7 +23,10 @@ import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class DescriptionSemanticIT {
@@ -63,14 +66,15 @@ public class DescriptionSemanticIT {
                 synonymVersion.set(latestDescriptionSemantic.get());
                 String actualSynonym=synonymVersion.get().fieldValues().get(1).toString();
 
-                if (matchFound.get()){
-                    return;
-                }
                 if (actualSynonym.equals(expectedSynonym)) {
                     matchFound.set(true);
-                    assertTrue(true, "found a match for " + expectedSynonym);
+                    assertTrue(true, "synonym found for " + expectedSynonym);
                 }
+
             }
         });
+        if (!matchFound.get()){
+            fail("No synonym found: " + expectedSynonym);
+        }
     }
 }
