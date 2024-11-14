@@ -13,9 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public class AxiomSyntaxTransformer {
+public class AxiomSyntaxTransformer extends AbstractTransformer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AxiomSyntaxTransformer.class.getSimpleName());
     private static final int ID = 0;
@@ -27,13 +28,17 @@ public class AxiomSyntaxTransformer {
     private static final int OWL_EXPRESSION = 6;
     String previousRowId;
 
+    AxiomSyntaxTransformer(UUID namespace) {
+        super(namespace);
+    }
+
     /**
      * Parses OWL Expression file and creates Axiom Semantics for each line
      *
      * @param axiomFile input file Path
      */
     public void transform(File axiomFile, Composer composer) {
-        EntityProxy.Concept author = SnomedUtility.getUserConcept();
+        EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
 
         try (Stream<String> lines = Files.lines(axiomFile.toPath())) {

@@ -17,9 +17,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public class LanguageTransformer {
+public class LanguageTransformer extends AbstractTransformer {
     private static final Logger LOG = LoggerFactory.getLogger(LanguageTransformer.class.getSimpleName());
     private static final int ID = 0;
     private static final int EFFECTIVE_TIME = 1;
@@ -29,6 +30,10 @@ public class LanguageTransformer {
     private static final int REFERENCED_COMPONENT_ID = 5;
     private static final int ACCEPTABILITY_ID = 6;
 
+    LanguageTransformer(UUID namespace) {
+        super(namespace);
+    }
+
     /**
      * This method uses a language file and transforms it into a list of entities
      * @param languageFile
@@ -36,7 +41,7 @@ public class LanguageTransformer {
      */
     public void transformLanguageSemantics(File languageFile, Composer composer) {
         List<Entity<? extends EntityVersion>> semantics = new ArrayList<>();
-        EntityProxy.Concept author = SnomedUtility.getUserConcept();
+        EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
 
         try (Stream<String> lines = Files.lines(languageFile.toPath())) {
@@ -61,5 +66,4 @@ public class LanguageTransformer {
             LOG.warn("Error parsing language file");
         }
     }
-
 }

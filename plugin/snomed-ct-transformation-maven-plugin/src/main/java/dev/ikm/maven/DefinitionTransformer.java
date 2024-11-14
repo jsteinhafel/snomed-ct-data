@@ -14,9 +14,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public class DefinitionTransformer {
+public class DefinitionTransformer extends AbstractTransformer {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefinitionTransformer.class.getSimpleName());
     private static final int ID = 0;
@@ -32,6 +33,10 @@ public class DefinitionTransformer {
     private static EntityProxy.Concept previousReferencedConcept;
     private static EntityProxy.Semantic previousDefinitionSemantic;
 
+    DefinitionTransformer(UUID namespace) {
+        super(namespace);
+    }
+
 
     /**
      * Parses Definition file and creates Definition Semantics for each line
@@ -40,7 +45,7 @@ public class DefinitionTransformer {
      */
 
     public void transform(File definitionFile, Composer composer) {
-        EntityProxy.Concept author = SnomedUtility.getUserConcept();
+        EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
 
         try (Stream<String> lines = Files.lines(definitionFile.toPath())) {

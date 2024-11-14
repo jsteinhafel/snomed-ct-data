@@ -138,7 +138,7 @@ public class SnomedUtility {
      * @return the snomed author
      */
         public static Concept getUserConcept(UUID namespace){
-        Concept snomedAuthor = Concept.make("IHTSDO SNOMED CT Author", UuidT5Generator.get(namespace,("IHTSDO SNOMED CT Author"));
+        Concept snomedAuthor = Concept.make("IHTSDO SNOMED CT Author", UuidT5Generator.get(namespace,("IHTSDO SNOMED CT Author")));
         return snomedAuthor;
     }
 
@@ -148,15 +148,6 @@ public class SnomedUtility {
      */
     public static Concept getPathConcept(){
         return TinkarTerm.DEVELOPMENT_PATH;
-    }
-
-    /**
-     * retrieves identifier concept
-     * @return snomedIntId from Concept class
-     */
-    public static Concept getIdentifierConcept(){
-        Concept snomedIntID = Concept.make(PublicIds.of(UuidUtil.fromSNOMED("900000000000294009")));
-        return snomedIntID;
     }
 
     private static Pattern getIdPattern() {

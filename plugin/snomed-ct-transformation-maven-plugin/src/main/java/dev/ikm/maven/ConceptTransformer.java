@@ -15,9 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public class ConceptTransformer {
+public class ConceptTransformer extends AbstractTransformer {
     private static final Logger LOG = LoggerFactory.getLogger(ConceptTransformer.class.getSimpleName());
     private static final int ID = 0;
     private static final int EFFECTIVE_TIME = 1;
@@ -25,6 +26,10 @@ public class ConceptTransformer {
     private static final int MODULE_ID = 3;
     private static final int DEFINITION_STATUS_ID = 4;
     private String previousRowId;
+
+    ConceptTransformer(UUID namespace) {
+        super(namespace);
+    }
 
     /**
      * transforms concept file into entity
@@ -34,7 +39,7 @@ public class ConceptTransformer {
         if(inputFile == null || !inputFile.exists() || !inputFile.isFile()){
             throw new RuntimeException("Concept input file is either null or invalid.");
         }
-        EntityProxy.Concept author = SnomedUtility.getUserConcept();
+        EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
 
         try (Stream<String> lines = Files.lines(inputFile.toPath())) {
@@ -68,14 +73,5 @@ public class ConceptTransformer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * setting up concept data to be transformed
-     * @param session transforms OWL snomed file into entities using the Tinkar Composer
-     * @param rowId represents each row in concept file
-     */
-    private void configureConcepts(Session session, String rowId) {
-
     }
 }

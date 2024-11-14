@@ -1,6 +1,5 @@
 package dev.ikm.maven;
 
-import dev.ikm.snomedct.databuilder.UUIDUtility;
 import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
@@ -15,9 +14,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.stream.Stream;
 
-public class DescriptionTransformer {
+public class DescriptionTransformer extends AbstractTransformer{
     private static final Logger LOG = LoggerFactory.getLogger(DescriptionTransformer.class.getSimpleName());
     private static final int ID = 0;
     private static final int EFFECTIVE_TIME = 1;
@@ -30,13 +30,17 @@ public class DescriptionTransformer {
     private static final int CASE_SIGNIFICANCE = 8;
     private String previousRowId;
 
+    DescriptionTransformer(UUID namespace) {
+        super(namespace);
+    }
+
     /**
      * This method uses a description file and transforms it into a list of entities
      * @param descriptionFile
      * @Returns void
      */
     public void transform(File descriptionFile, Composer composer){
-        EntityProxy.Concept author = SnomedUtility.getUserConcept();
+        EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
 
         try (Stream<String> lines = Files.lines(descriptionFile.toPath())) {
@@ -70,6 +74,4 @@ public class DescriptionTransformer {
             throw new RuntimeException(e);
         }
     }
-
-
 }

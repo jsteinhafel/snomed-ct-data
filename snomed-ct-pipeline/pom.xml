@@ -26,4 +26,16 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>snomed-ct-transformation-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <namespaceString>${origin.namespace}</namespaceString>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
