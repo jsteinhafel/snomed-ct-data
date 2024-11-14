@@ -59,5 +59,9 @@
             <groupId>dev.ikm.tinkar</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>dev.ikm.tinkar.ext.owl</groupId>
+            <artifactId>owl-extension</artifactId>
+        </dependency>
     </dependencies>
 </project>

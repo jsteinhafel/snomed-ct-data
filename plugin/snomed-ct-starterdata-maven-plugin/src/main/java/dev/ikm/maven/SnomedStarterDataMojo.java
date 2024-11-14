@@ -5,7 +5,6 @@ import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.ConceptAssembler;
@@ -84,7 +83,7 @@ public class SnomedStarterDataMojo extends AbstractMojo
                     )
             );
 
-            EntityProxy.Concept snomedIdentifier = EntityProxy.Concept.make("SNOMED CT Identifier", UuidUtil.fromSNOMED("900000000000294009"));
+            EntityProxy.Concept snomedIdentifier = EntityProxy.Concept.make("SNOMED CT Identifier",  UuidT5Generator.get(namespace,"900000000000294009"));
             session.compose((ConceptAssembler concept) -> concept
                     .concept(snomedIdentifier)
                     .attach((FullyQualifiedName fqn) -> fqn

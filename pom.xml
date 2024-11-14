@@ -112,6 +112,11 @@
                 <artifactId>datastore-proxy</artifactId>
                 <version>1.6.0-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar.ext.owl</groupId>
+                <artifactId>owl-extension</artifactId>
+                <version>${tinkar-core.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
