@@ -8,7 +8,8 @@
     </parent>
 
     <artifactId>snomed-ct-transformation-maven-plugin</artifactId>
-    <packaging>jar</packaging>
+    <packaging>maven-plugin</packaging>
+    <version>1.0.0-SNAPSHOT</version>
 
     <name>snomed-ct-transformation-maven-plugin</name>
     <url>http://maven.apache.org</url>

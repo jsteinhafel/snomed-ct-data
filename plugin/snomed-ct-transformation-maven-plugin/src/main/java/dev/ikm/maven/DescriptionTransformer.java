@@ -51,9 +51,9 @@ public class DescriptionTransformer extends AbstractTransformer{
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
                         EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
 
-                        EntityProxy.Concept descriptionTypeConcept = SnomedUtility.getDescriptionType(data[TYPE_ID]);
-                        EntityProxy.Concept languageTypeConcept = SnomedUtility.getLanguageConcept(data[LANGUAGE_CODE]);
-                        EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE]);
+                        EntityProxy.Concept descriptionTypeConcept = TransformationHelper.getDescriptionType(data[TYPE_ID]);
+                        EntityProxy.Concept languageTypeConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
+                        EntityProxy.Concept caseSensitivityConcept = TransformationHelper.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE]);
 
                         EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[CONCEPT_ID])));
                         EntityProxy.Semantic definitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));

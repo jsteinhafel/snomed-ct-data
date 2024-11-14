@@ -40,7 +40,6 @@ public class SnomedUtility {
     private static final Logger LOG = LoggerFactory.getLogger(SnomedUtility.class.getSimpleName());
     private final List<Entity<? extends EntityVersion>> STAMP_LIST = new ArrayList<>();
 
-
     /**
      * taking time stamp and making it an epoch
      * @param effectiveTime String representation dates in yyyyMMdd format
@@ -54,83 +53,6 @@ public class SnomedUtility {
             throw new RuntimeException(e);
         }
         return epochTime;
-    }
-
-    /**
-     * transforms languageCode in concept
-     * @param languageCode String representation of english or spanish
-     * @return language concept
-     */
-    public static Concept getLanguageConcept(String languageCode){
-        Concept languageConcept = null;
-        switch (languageCode) {
-            case "en" -> languageConcept = TinkarTerm.ENGLISH_LANGUAGE;
-            case "es" -> languageConcept = TinkarTerm.SPANISH_LANGUAGE;
-            default -> throw new RuntimeException("UNRECOGNIZED LANGUAGE CODE");
-        }
-        return languageConcept;
-    }
-
-    /**
-     * transforms caseSensitivity code into concept
-     * @param caseSensitivityCode represents case sensitivity of a description
-     * @return case sensitivity concept
-     */
-    public static Concept getDescriptionCaseSignificanceConcept(String caseSensitivityCode){
-        Concept caseSensitivityConcept = null;
-        switch (caseSensitivityCode) {
-            case "900000000000448009" -> caseSensitivityConcept = TinkarTerm.DESCRIPTION_NOT_CASE_SENSITIVE;
-            case "900000000000017005" -> caseSensitivityConcept = TinkarTerm.DESCRIPTION_CASE_SENSITIVE;
-            case "900000000000020002" -> caseSensitivityConcept = TinkarTerm.DESCRIPTION_INITIAL_CHARACTER_CASE_SENSITIVE;
-            default -> throw new RuntimeException("UNRECOGNIZED CASE SENSITIVITY CODE");
-        }
-        return caseSensitivityConcept;
-    }
-
-    /**
-     * transform descriptionType into concept
-     * @param descriptionTypeCode String representation the type of descriptions
-     * @return description type concept
-     */
-     public static Concept getDescriptionType(String descriptionTypeCode){
-        Concept descriptionTypeConcept = null;
-        switch (descriptionTypeCode) {
-            case "900000000000550004" -> descriptionTypeConcept = TinkarTerm.DEFINITION_DESCRIPTION_TYPE;
-            case "900000000000003001" -> descriptionTypeConcept = TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE;
-            case "900000000000013009" -> descriptionTypeConcept = TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE;
-            default -> throw new RuntimeException("UNRECOGNIZED DESCRIPTION TYPE CODE");
-        }
-        return descriptionTypeConcept;
-    }
-
-    /**
-     * assigns dialect pattern to TinkarTerm depending on dialectRefSetId
-     * @param dialectRefsetId GB or US dialect semantic
-     * @return dialect pattern
-     */
-    public static EntityProxy.Pattern getDialectPattern(String dialectRefsetId) {
-        EntityProxy.Pattern dialectPattern = null;
-        switch (dialectRefsetId) {
-            case "900000000000509007" -> dialectPattern = TinkarTerm.US_DIALECT_PATTERN;
-            case "900000000000508004" -> dialectPattern = TinkarTerm.GB_DIALECT_PATTERN;
-            default -> throw new RuntimeException("UNRECOGNIZED ACCEPTABILITY CODE");
-        }
-        return dialectPattern;
-    }
-
-    /**
-     * assigns acceptability code to TinkarTerm based on acceptabilityCode
-     * @param acceptabilityCode preferred or acceptable
-     * @return acceptability concept
-     */
-    public static Concept getDialectAccceptability(String acceptabilityCode){
-        Concept acceptabilityConcept = null;
-        switch (acceptabilityCode) {
-            case "900000000000548007" -> acceptabilityConcept = TinkarTerm.PREFERRED;
-            case "900000000000549004" -> acceptabilityConcept = TinkarTerm.ACCEPTABLE;
-            default -> throw new RuntimeException("UNRECOGNIZED ACCEPTABILITY CODE");
-        }
-        return acceptabilityConcept;
     }
 
     /**

@@ -31,9 +31,10 @@
             <plugin>
                 <groupId>dev.ikm.maven</groupId>
                 <artifactId>snomed-ct-transformation-maven-plugin</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0-SNAPSHOT</version>
                 <configuration>
                     <namespaceString>${origin.namespace}</namespaceString>
+                    <inputDirectoryPath>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology</inputDirectoryPath>
                 </configuration>
             </plugin>
         </plugins>

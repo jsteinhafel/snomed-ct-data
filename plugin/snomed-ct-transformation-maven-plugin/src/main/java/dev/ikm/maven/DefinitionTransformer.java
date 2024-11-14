@@ -64,9 +64,9 @@ public class DefinitionTransformer extends AbstractTransformer {
                             previousDefinitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
                         }
 
-                        EntityProxy.Concept languageConcept = SnomedUtility.getLanguageConcept(data[LANGUAGE_CODE]);
-                        EntityProxy.Concept caseSignificanceConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE_ID]);
-                        EntityProxy.Concept descriptionTypeConcept = SnomedUtility.getDescriptionType(data[TYPE_ID]);
+                        EntityProxy.Concept languageConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
+                        EntityProxy.Concept caseSignificanceConcept = TransformationHelper.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE_ID]);
+                        EntityProxy.Concept descriptionTypeConcept = TransformationHelper.getDescriptionType(data[TYPE_ID]);
 
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
                                 .semantic(previousDefinitionSemantic)
@@ -78,7 +78,6 @@ public class DefinitionTransformer extends AbstractTransformer {
                                         .with(caseSignificanceConcept)
                                         .with(descriptionTypeConcept)
                                 ));
-
                     });
         } catch (IOException | SecurityException ex) {
             LOG.info(ex.toString());

@@ -56,10 +56,10 @@ public class LanguageTransformer extends AbstractTransformer {
 
                         Session session = composer.open(status, epochTime, author, moduleId, path);
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
-                                .pattern(SnomedUtility.getDialectPattern(data[REFSET_ID]))
+                                .pattern(TransformationHelper.getDialectPattern(data[REFSET_ID]))
                                 .reference(referencedComponent)
                                 .fieldValues(fieldValues -> fieldValues
-                                        .with(SnomedUtility.getDialectAccceptability(data[ACCEPTABILITY_ID]))
+                                        .with(TransformationHelper.getDialectAccceptability(data[ACCEPTABILITY_ID]))
                                 ));
                     });
         } catch(IOException e) {
