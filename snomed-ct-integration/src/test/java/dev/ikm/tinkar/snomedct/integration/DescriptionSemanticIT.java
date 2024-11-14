@@ -1,6 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.snomedct.entitytransformer.SnomedUtility;
+
 import dev.ikm.tinkar.common.id.PublicId;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
@@ -8,6 +8,7 @@ import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.Calculators;
+import dev.ikm.tinkar.coordinate.stamp.StateSet;
 import dev.ikm.tinkar.coordinate.stamp.calculator.Latest;
 import dev.ikm.tinkar.coordinate.stamp.calculator.StampCalculator;
 import dev.ikm.tinkar.entity.Entity;
@@ -52,7 +53,7 @@ public class DescriptionSemanticIT {
     }
     @Test
     public void testDescriptionSemantics()throws IOException {
-        String sourceFilePath ="C:\\Users\\patrichards\\Solor\\SnomedCT_InternationalRF2_PRODUCTION_20240201T120000Z\\Full\\Terminology\\sct2_Description_Full-en_INT_20240201.txt";
+        String sourceFilePath ="src/test/resources/snomedct_descriptions_sample.txt";
 
         try(BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))){
             String line;
@@ -62,7 +63,7 @@ public class DescriptionSemanticIT {
 
                 //pass these args in assertion method
                 long effectiveTimeToLong=dateStringToEpochMillis(columns[1]);
-                EntityProxy.Concept descriptionStatus = Integer.parseInt(columns[2]) == 1 ? TinkarTerm.ACTIVE_STATE : TinkarTerm.INACTIVE_STATE;
+                StateSet descriptionStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
                 EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
                 String term =columns[7];
                 EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(columns[8]);
