@@ -22,19 +22,17 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 
 public class DescriptionSemanticIT {
@@ -52,27 +50,28 @@ public class DescriptionSemanticIT {
     public static void shutdown() {
         PrimitiveData.stop();
     }
-    @Test
-    public void testDescriptionSemantics()throws IOException {
-        String sourceFilePath ="src/test/resources/snomedct_descriptions_sample.txt";
 
-        try(BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))){
+    @Test
+    public void testDescriptionSemantics() throws IOException {
+        String sourceFilePath = "src/test/resources/snomedct_descriptions_sample.txt";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
             String line;
-            while((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 if (line.startsWith("id")) continue;
                 String[] columns = line.split("\\t");
 
                 //pass these args in assertion method
-                long effectiveTimeToLong=SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
+                long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
                 StateSet descriptionStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
                 EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
-                String term =columns[7];
+                String term = columns[7];
                 EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(columns[8]);
 
+                assertDescription(term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus);
             }
         }
     }
-
 
 
     @Test
@@ -103,6 +102,7 @@ public class DescriptionSemanticIT {
 
     /**
      * Test FQN Term value.
+     *
      * @result Term is validated against a valid DataSet.
      */
     @Test
