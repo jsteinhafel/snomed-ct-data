@@ -58,7 +58,7 @@ public class DescriptionSemanticIT {
                 String[] columns = line.split("\\t");
 
                 //pass these args in assertion method
-                long effectiveTimeToLong=dateStringToEpochMillis(columns[1]);
+                long effectiveTimeToLong=SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
                 StateSet descriptionStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
                 EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
                 String term =columns[7];
@@ -68,15 +68,7 @@ public class DescriptionSemanticIT {
         }
     }
 
-    private long dateStringToEpochMillis(String dateString) {
-        long epochMillis;
-        try {
-            epochMillis = new SimpleDateFormat("yyyyMMdd").parse(dateString).getTime();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        return epochMillis;
-    }
+
 
     @Test
     public void testSingleSynonym() {
