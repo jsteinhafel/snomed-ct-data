@@ -23,13 +23,17 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 public class DescriptionSemanticIT {
 
@@ -48,16 +52,40 @@ public class DescriptionSemanticIT {
     }
 
     @Test
+    public void testDescriptionSemantics() throws IOException {
+        String sourceFilePath = "src/test/resources/snomedct_descriptions_sample.txt";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("id")) continue;
+                String[] columns = line.split("\\t");
+
+                //pass these args in assertion method
+                long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
+                StateSet descriptionStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
+                EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
+                String term = columns[7];
+                EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(columns[8]);
+
+                assertDescription(term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus);
+            }
+        }
+    }
+
+
+    @Test
     public void testSingleSynonym() {
         String expectedSynonym = "Tumor of pancreas";
         UUID regularNameDescriptionId = UUID.fromString("d7da4d59-8bdf-38cf-b863-c657c35a284e");
 
-        Entity<EntityVersion> entity = EntityService.get().getEntityFast(regularNameDescriptionId);
+
+        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(regularNameDescriptionId);
         StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
         PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
 
         AtomicBoolean matchFound = new AtomicBoolean(false);
-        EntityService.get().forEachSemanticForComponentOfPattern(entity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
+        EntityService.get().forEachSemanticForComponentOfPattern(cldEntity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
 
             Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
             Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
