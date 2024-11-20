@@ -16,8 +16,8 @@
         <module>plugin</module>
         <module>snomed-ct-binding</module>
         <module>snomed-ct-integration</module>
-        <module>snomed-ct-pipeline</module>
         <module>snomed-ct-starterdata</module>
+        <module>snomed-ct-pipeline</module>
     </modules>
 
     <properties>
@@ -46,7 +46,7 @@
         <!-- starter data -->
         <composer.version>1.5.0</composer.version>
         <tinkar-starter-data.version>1.0.0</tinkar-starter-data.version>
-        <tinkar-core.version>1.76.0</tinkar-core.version>
+        <tinkar-core.version>1.77.0</tinkar-core.version>
     </properties>
 
     <dependencyManagement>
@@ -108,9 +108,9 @@
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>dev.ikm.maven</groupId>
-                <artifactId>datastore-proxy</artifactId>
-                <version>1.6.0-SNAPSHOT</version>
+                <groupId>dev.ikm.tinkar.ext.owl</groupId>
+                <artifactId>owl-extension</artifactId>
+                <version>${tinkar-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

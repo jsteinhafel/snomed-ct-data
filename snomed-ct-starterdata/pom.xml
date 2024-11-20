@@ -40,7 +40,7 @@
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
-                            <outputDirectory>${project.build.directory}/data</outputDirectory>
+                            <outputDirectory>${project.build.directory}/starter-data</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -56,7 +56,7 @@
                         </goals>
                         <configuration>
                             <dataFiles>
-                                <dataFile>${project.build.directory}/data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
+                                <dataFile>${project.build.directory}/starter-data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
                             </dataFiles>
                         </configuration>
                     </execution>
@@ -65,7 +65,11 @@
             <plugin>
                 <groupId>dev.ikm.maven</groupId>
                 <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.0-SNAPSHOT</version>
+                <configuration>
+                    <namespaceString>${origin.namespace}</namespaceString>
+                    <datastorePath>${project.build.directory}/datastore</datastorePath>
+                </configuration>
                 <executions>
                     <execution>
                         <id>run-snomed-starterdata</id>

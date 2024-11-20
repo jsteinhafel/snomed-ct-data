@@ -18,12 +18,27 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>snomed-ct-transformation-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <configuration>
+                    <namespaceString>${origin.namespace}</namespaceString>
+                    <datastorePath>${project.build.directory}/datastore</datastorePath>
+                    <inputDirectoryPath>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology</inputDirectoryPath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>run-snomed-transformation</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>run-snomed-transformation</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
