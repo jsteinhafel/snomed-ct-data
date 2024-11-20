@@ -19,8 +19,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import dev.ikm.maven.datastore.proxy.DatastoreProxy;
-
 import java.io.File;
 import java.util.UUID;
 
@@ -34,22 +32,26 @@ import static dev.ikm.tinkar.terms.TinkarTerm.ENGLISH_LANGUAGE;
 @Mojo(name = "run-snomed-starterdata", defaultPhase = LifecyclePhase.INSTALL)
 public class SnomedStarterDataMojo extends AbstractMojo
 {
+    @Parameter(property = "origin.namespace", required = true)
+    String namespaceString;
+    @Parameter(property = "datastore.path", required = true)
+    private String datastorePath;
+    @Parameter(property = "input.directory", defaultValue = "Open SpinedArrayStore")
+    private String controllerName;
+
+    private UUID namespace;
     public void execute() throws MojoExecutionException
     {
-        try (DatastoreProxy datastoreProxy =  new DatastoreProxy()) {
-
-            File datastore = new File("/Users/jsteinhafel/Solor/generated-data");
+        try {
+            this.namespace = UUID.fromString(namespaceString);
+            File datastore = new File(datastorePath);
 
             CachingService.clearAll();
             ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
-            PrimitiveData.selectControllerByName("Open SpinedArrayStore");
+            PrimitiveData.selectControllerByName(controllerName);
             PrimitiveData.start();
 
-//            datastoreProxy.open();
-
             Composer composer = new Composer("Snomed Starter Data Composer");
-
-            UUID namespace = UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de");
 
             Session session = composer.open(State.ACTIVE,
                     TinkarTerm.USER,

@@ -1,6 +1,7 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
@@ -35,6 +36,7 @@ public class ConceptTransformer extends AbstractTransformer {
      * transforms concept file into entity
      * @param inputFile concept input txt file
      */
+    @Override
     public void transform(File inputFile, Composer composer){
         if(inputFile == null || !inputFile.exists() || !inputFile.isFile()){
             throw new RuntimeException("Concept input file is either null or invalid.");
@@ -48,9 +50,9 @@ public class ConceptTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
+                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[MODULE_ID])));
 
-                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
+                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[ID])));
 
                         Session session = composer.open(status, time, author, moduleIdConcept, path);
                         if(!data[ID].equals(previousRowId)) {

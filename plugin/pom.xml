@@ -36,10 +36,6 @@
             <artifactId>composer</artifactId>
         </dependency>
         <dependency>
-            <groupId>dev.ikm.maven</groupId>
-            <artifactId>datastore-proxy</artifactId>
-        </dependency>
-        <dependency>
             <groupId>dev.ikm.tinkar</groupId>
             <artifactId>data-spinedarray-provider</artifactId>
         </dependency>
@@ -55,10 +51,10 @@
             <groupId>dev.ikm.tinkar</groupId>
             <artifactId>executor-provider</artifactId>
         </dependency>
-        <dependency>
-            <groupId>dev.ikm.tinkar</groupId>
-            <artifactId>common</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>dev.ikm.tinkar</groupId>-->
+<!--            <artifactId>common</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>dev.ikm.tinkar.ext.owl</groupId>
             <artifactId>owl-extension</artifactId>

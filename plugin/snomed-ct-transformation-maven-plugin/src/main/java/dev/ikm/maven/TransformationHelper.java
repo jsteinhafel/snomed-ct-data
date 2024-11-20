@@ -27,7 +27,6 @@ public class TransformationHelper {
         // dialect acceptability
         SNOMED_MAPPINGS.put("900000000000548007", TinkarTerm.PREFERRED);
         SNOMED_MAPPINGS.put("900000000000549004", TinkarTerm.ACCEPTABLE);
-
     }
 
     private static <T> T getMapping(String code, Class<T> expectedType) {

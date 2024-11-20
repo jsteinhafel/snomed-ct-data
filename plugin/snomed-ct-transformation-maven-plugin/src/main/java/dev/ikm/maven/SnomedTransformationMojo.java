@@ -22,16 +22,13 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static dev.ikm.tinkar.terms.TinkarTerm.DESCRIPTION_NOT_CASE_SENSITIVE;
-import static dev.ikm.tinkar.terms.TinkarTerm.ENGLISH_LANGUAGE;
-
 @Mojo(name = "run-snomed-transformation", defaultPhase = LifecyclePhase.INSTALL)
 public class SnomedTransformationMojo extends AbstractMojo {
     private static final Logger LOG = LoggerFactory.getLogger(SnomedTransformationMojo.class.getSimpleName());
 
     @Parameter(property = "origin.namespace", required = true)
     String namespaceString;
-    @Parameter(property = "datastore.path", defaultValue = "${user.home}/Solor/generated-data")
+    @Parameter(property = "datastore.path", required = true)
     private String datastorePath;
     @Parameter(property = "input.directory", required = true)
     private String inputDirectoryPath;
@@ -69,11 +66,11 @@ public class SnomedTransformationMojo extends AbstractMojo {
     public void transformFile(File datastore, File inputFileOrDirectory){
         LOG.info("########## Snomed Transformer Starting...");
         initializeDatastore(datastore);
+
         Composer composer = new Composer("Snomed Transformer Composer");
         try {
             processFilesFromInput(inputFileOrDirectory, composer);
             composer.commitAllSessions();
-            runAxiomSyntaxTransformer();
         } finally {
             PrimitiveData.stop();
             LOG.info("########## Snomed Transformer Finishing...");
@@ -128,18 +125,5 @@ public class SnomedTransformationMojo extends AbstractMojo {
             return new AxiomSyntaxTransformer(namespace);
         }
         return null;
-    }
-
-    private static void runAxiomSyntaxTransformer() {
-        LOG.info("########## Transforming OWL Axioms...");
-        Transaction owlTransformationTransaction = Transaction.make();
-        try {
-            new Rf2OwlToLogicAxiomTransformer(
-                    owlTransformationTransaction,
-                    TinkarTerm.OWL_AXIOM_SYNTAX_PATTERN,
-                    TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN).call();
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
     }
 }

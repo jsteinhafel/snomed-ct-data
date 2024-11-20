@@ -1,6 +1,7 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
@@ -43,7 +44,7 @@ public class DefinitionTransformer extends AbstractTransformer {
      *
      * @param definitionFile input file to parse
      */
-
+    @Override
     public void transform(File definitionFile, Composer composer) {
         EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
@@ -54,14 +55,14 @@ public class DefinitionTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long epochTime = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
+                        EntityProxy.Concept moduleConcept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[MODULE_ID])));
 
                         Session session = composer.open(status, epochTime, author, moduleConcept, path);
 
                         if (!data[ID].equals(previousRowId)) {
                             previousRowId = data[ID];
-                            previousReferencedConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[CONCEPT_ID])));
-                            previousDefinitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
+                            previousReferencedConcept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[CONCEPT_ID])));
+                            previousDefinitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidT5Generator.get(namespace, data[ID])));
                         }
 
                         EntityProxy.Concept languageConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);

@@ -1,6 +1,7 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
@@ -39,6 +40,7 @@ public class DescriptionTransformer extends AbstractTransformer{
      * @param descriptionFile
      * @Returns void
      */
+    @Override
     public void transform(File descriptionFile, Composer composer){
         EntityProxy.Concept author = SnomedUtility.getUserConcept(namespace);
         EntityProxy.Concept path = SnomedUtility.getPathConcept();
@@ -49,14 +51,14 @@ public class DescriptionTransformer extends AbstractTransformer{
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
+                        EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[MODULE_ID])));
 
                         EntityProxy.Concept descriptionTypeConcept = TransformationHelper.getDescriptionType(data[TYPE_ID]);
                         EntityProxy.Concept languageTypeConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
                         EntityProxy.Concept caseSensitivityConcept = TransformationHelper.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE]);
 
-                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[CONCEPT_ID])));
-                        EntityProxy.Semantic definitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
+                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[CONCEPT_ID])));
+                        EntityProxy.Semantic definitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidT5Generator.get(namespace, data[ID])));
 
                         Session session = composer.open(status, time, author, moduleId, path);
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
