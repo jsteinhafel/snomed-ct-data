@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefinitionSemanticIT {
 
@@ -49,30 +49,29 @@ public class DefinitionSemanticIT {
     @Test
     public void testDefinition() {
         // Given
-        String expectedTerm = "Erythema gyratum repens (disorder)";
+        String expectedTerm = "Domestic goat";
         String actualTerm = "";
-        String actualUUID = "ba8a3539-31fa-307a-895c-37401f0aea78";
+        String actualUUID = "6e4469d1-c972-3031-9455-c18e7b377fbd";
 
         UUID diseaseId = UUID.fromString(actualUUID);
         Entity<EntityVersion> entity = EntityService.get().getEntityFast(diseaseId);
         StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
 
         // When
-        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get(); //DYNAMIC_DEFINITION_DESCRIPTION
+        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
         AtomicReference<SemanticEntityVersion> matchFound = new AtomicReference<>();
         EntityService.get().forEachSemanticForComponentOfPattern(entity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
-            Latest<SemanticEntityVersion> latestDefinitionSemantic = stampCalc.latest(descriptionSemantic);
-            Component definitionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DEFINITION_DESCRIPTION_TYPE, latestDefinitionSemantic.get());
-            if (PublicId.equals(definitionType.publicId(), TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE)) {
-                matchFound.set(latestDefinitionSemantic.get());
+            Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
+            Component definitionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
+            if (PublicId.equals(definitionType.publicId(), TinkarTerm.DEFINITION_DESCRIPTION_TYPE)) {
+                matchFound.set(latestDescriptionSemantic.get());
             }
         });
 
         actualTerm = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, matchFound.get());
 
         // Then
-//        assertEquals(expectedTerm, actualTerm, "Message: Assert Term Values");
-        assertTrue(true);
+        assertEquals(expectedTerm, actualTerm, "Message: Assert Term Values");
     }
 
 }
