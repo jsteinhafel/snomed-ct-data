@@ -1,22 +1,20 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.id.PublicId;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
+import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.component.Component;
-import dev.ikm.tinkar.coordinate.Calculators;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
 import dev.ikm.tinkar.coordinate.stamp.calculator.Latest;
 import dev.ikm.tinkar.coordinate.stamp.calculator.StampCalculator;
-import dev.ikm.tinkar.entity.Entity;
 import dev.ikm.tinkar.entity.EntityService;
-import dev.ikm.tinkar.entity.EntityVersion;
 import dev.ikm.tinkar.entity.PatternEntityVersion;
-import dev.ikm.tinkar.entity.SemanticEntityVersion;
+import dev.ikm.tinkar.entity.SemanticRecord;
+import dev.ikm.tinkar.entity.SemanticVersionRecord;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
@@ -24,15 +22,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DescriptionSemanticIT {
 
@@ -58,10 +55,12 @@ public class DescriptionSemanticIT {
     @Test
     public void testDescriptionSemantics() throws IOException {
         // Given
-        String sourceFilePath = "src/test/resources/snomedct_descriptions_sample.txt";
-
+        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Description_Full-en_INT_20241001.txt";
+        String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
+        int notFound = 0;
         // When
-        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
+             BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("id")) continue;
@@ -73,113 +72,35 @@ public class DescriptionSemanticIT {
                 EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
                 String term = columns[7];
                 EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(columns[8]);
+                UUID id = UuidUtil.fromSNOMED(columns[0]);
 
-                // Then
-                assertDescription(term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus);
+                if (!assertDescription(id, term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus)) {
+                    notFound++;
+                    bw.write(term + "\t" + id + "\t" + columns[1] +
+                            "\t" + (descriptionStatus.equals(StateSet.ACTIVE) ? "Active" : "Inactive") +
+                            "\t" + descriptionType.description() +
+                            "\t" + caseSensitivityConcept.description() + "\n");
+                }
             }
         }
+        assertEquals(0, notFound, "Unable to find " + notFound + " description semantics. Details written to " + errorFile);
     }
 
-    /**
-     * Test Single Synonym.
-     *
-     * @result Validate if Synonym is Found.
-     */
-    @Test
-    public void testSingleSynonym() {
-        // Given
-        String expectedSynonym = "Tumor of pancreas";
-        UUID regularNameDescriptionId = UUID.fromString("d7da4d59-8bdf-38cf-b863-c657c35a284e");
-
-        Entity<EntityVersion> cldEntity = EntityService.get().getEntityFast(regularNameDescriptionId);
-        StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
-        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
-
-        // When
-        AtomicBoolean matchFound = new AtomicBoolean(false);
-        EntityService.get().forEachSemanticForComponentOfPattern(cldEntity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
-
-            Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
-            Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
-
-            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE)) {
-                String actualSynonym = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, latestDescriptionSemantic.get());
-                if (actualSynonym.equals(expectedSynonym)) {
-                    matchFound.set(true);
-                }
-            }
-        });
-
-        // Then
-        assertTrue(matchFound.get(), "No synonym found: " + expectedSynonym);
-    }
-
-    /**
-     * Test FQN Term value.
-     *
-     * @result Term is validated against a valid DataSet.
-     */
-    @Test
-    public void testFQN() {
-        // Given
-        String expectedTermFqn = "Erythema gyratum repens (disorder)";
-        String actualTermFqn = "";
-        String actualUUID = "ba8a3539-31fa-307a-895c-37401f0aea78";
-
-        UUID diseaseId = UUID.fromString(actualUUID);
-        Entity<EntityVersion> entity = EntityService.get().getEntityFast(diseaseId);
-        StampCalculator stampCalc = Calculators.Stamp.DevelopmentLatestActiveOnly();
-
-        // When
-        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
-        AtomicReference<SemanticEntityVersion> fqnVersion = new AtomicReference<>();
-        EntityService.get().forEachSemanticForComponentOfPattern(entity.nid(), TinkarTerm.DESCRIPTION_PATTERN.nid(), (descriptionSemantic) -> {
-            Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(descriptionSemantic);
-            Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
-            if (PublicId.equals(descriptionType.publicId(), TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE)) {
-                fqnVersion.set(latestDescriptionSemantic.get());
-            }
-        });
-
-        actualTermFqn = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, fqnVersion.get());
-
-        // Then
-        assertEquals(expectedTermFqn, actualTermFqn, "Message: Assert Term Values");
-    }
-
-    /**
-     * Assert Description
-     *
-     * @param term
-     * @param nameType
-     * @param caseSensitive
-     * @param effectiveDate
-     * @param activeFlag
-     */
-    private void assertDescription(String term, EntityProxy.Concept nameType, EntityProxy.Concept caseSensitive, long effectiveDate, StateSet activeFlag) {
-        // Given
+    private boolean assertDescription(UUID id, String term, EntityProxy.Concept nameType, EntityProxy.Concept caseSensitive, long effectiveDate, StateSet activeFlag) {
         StampPositionRecord stampPosition = StampPositionRecord.make(effectiveDate, TinkarTerm.DEVELOPMENT_PATH.nid());
         StampCalculator stampCalc = StampCoordinateRecord.make(activeFlag, stampPosition).stampCalculator();
+        SemanticRecord entity = EntityService.get().getEntityFast(id);
 
-        // When
         PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
-        AtomicReference<String> actualTerm = new AtomicReference<>();
-        EntityService.get().forEachSemanticOfPattern(latestDescriptionPattern.nid(), (semanticVersion) -> {
-            Latest<SemanticEntityVersion> latestDescriptionSemantic = stampCalc.latest(semanticVersion);
-            if (latestDescriptionSemantic.isPresent()) {
-                Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latestDescriptionSemantic.get());
-                Component caseSensitivity = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_CASE_SIGNIFICANCE, latestDescriptionSemantic.get());
-                if (PublicId.equals(descriptionType.publicId(), nameType) && PublicId.equals(caseSensitivity.publicId(), caseSensitive)) {
-                    String text = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, latestDescriptionSemantic.get());
-                    if (text.equals(term)) {
-                        actualTerm.set(text);
-                    }
-                }
-            }
-        });
+        Latest<SemanticVersionRecord> latest = stampCalc.latest(entity);
+        if (latest.isPresent()) {
+            Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latest.get());
+            Component caseSensitivity = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_CASE_SIGNIFICANCE, latest.get());
+            String text = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.TEXT_FOR_DESCRIPTION, latest.get());
 
-        // Then
-        assertEquals(term, actualTerm.get());
+            return descriptionType.equals(nameType) && caseSensitivity.equals(caseSensitive) && text.equals(term);
+        }
+        return false;
     }
 
 }
