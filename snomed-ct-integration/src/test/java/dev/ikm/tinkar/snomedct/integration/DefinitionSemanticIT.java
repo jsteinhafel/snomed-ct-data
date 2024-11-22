@@ -50,7 +50,7 @@ public class DefinitionSemanticIT {
 
     @Test
     public void testDefinitionSemantics() throws IOException {
-        String sourceFilePath = System.getProperty("user.home") + "/Solor/SnomedCT_InternationalRF2_PRODUCTION_20240201T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_INT_20240201.txt";
+        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20240201T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_INT_20240201.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
             String line;
