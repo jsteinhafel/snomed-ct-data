@@ -33,10 +33,10 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>dev.ikm.tinkar.data</groupId>
-                                    <artifactId>tinkar-starter-data-reasoned</artifactId>
-                                    <version>1.0.0</version>
-                                    <classifier>pb</classifier>
+                                    <groupId>dev.ikm.tinkar</groupId>
+                                    <artifactId>tinkar-starter-data</artifactId>
+                                    <version>1.3.0</version>
+                                    <classifier>tinkar-export-pb</classifier>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
