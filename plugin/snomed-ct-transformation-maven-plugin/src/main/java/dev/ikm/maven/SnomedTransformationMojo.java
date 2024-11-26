@@ -18,9 +18,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Mojo(name = "run-snomed-transformation", defaultPhase = LifecyclePhase.INSTALL)
 public class SnomedTransformationMojo extends AbstractMojo {
@@ -50,6 +52,31 @@ public class SnomedTransformationMojo extends AbstractMojo {
             throw new MojoExecutionException("Invalid namespace for UUID formatting");
         }
     }
+
+//    private String unzipRawData(String zipFile) throws IOException {
+//        byte[] buffer = new byte[1024];
+//        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+//        ZipEntry zipEntry = zis.getNextEntry();
+//
+//        File newFile = new File(destDir, zipEntry.getName());
+//        while (zipEntry != null) {
+//            if (zipEntry.isDirectory()) {
+//                newFile.mkdirs();
+//            } else {
+//                FileOutputStream fos = new FileOutputStream(newFile);
+//                int len;
+//                while ((len = zis.read(buffer)) > 0) {
+//                    fos.write(buffer, 0, len);
+//                }
+//                fos.close();
+//            }
+//            zipEntry = zis.getNextEntry();
+//        }
+//        zis.closeEntry();
+//        zis.close();
+//
+//        File terminologyDir = new File(destDir, "")
+//    }
 
     private void validateInputDirectory(File inputFileOrDirectory) throws MojoExecutionException {
         if(!inputFileOrDirectory.exists()){

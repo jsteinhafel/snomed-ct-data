@@ -20,44 +20,61 @@
 
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-dependency-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-test-data</id>-->
+<!--                        <phase>initialize</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactItems>-->
+<!--                                <artifactItem>-->
+<!--                                    <groupId>dev.ikm.tinkar</groupId>-->
+<!--                                    <artifactId>tinkar-starter-data</artifactId>-->
+<!--                                    <version>1.3.0</version>-->
+<!--                                    <classifier>tinkar-export-pb</classifier>-->
+<!--                                    <type>zip</type>-->
+<!--                                </artifactItem>-->
+<!--                            </artifactItems>-->
+<!--                            <outputDirectory>${project.build.directory}/starter-data</outputDirectory>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>dev.ikm.maven</groupId>-->
+<!--                <artifactId>tinkar-maven-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>load-data</id>-->
+<!--                        <goals>-->
+<!--                            <goal>load-data</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <dataFiles>-->
+<!--                                <dataFile>${project.build.directory}/starter-data/tinkar-starter-data-1.3.0-tinkar-export-pb.zip</dataFile>-->
+<!--                            </dataFiles>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-test-data</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>dev.ikm.tinkar.data</groupId>
-                                    <artifactId>tinkar-starter-data-reasoned</artifactId>
-                                    <version>1.0.0</version>
-                                    <classifier>pb</classifier>
-                                    <type>zip</type>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}/starter-data</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>dev.ikm.maven</groupId>
-                <artifactId>tinkar-maven-plugin</artifactId>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>tinkar-data-maven-plugin</artifactId>
+                <version>1.4.0-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>load-data</id>
                         <goals>
-                            <goal>load-data</goal>
+                            <goal>generate-data</goal>
                         </goals>
                         <configuration>
-                            <dataFiles>
-                                <dataFile>${project.build.directory}/starter-data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
-                            </dataFiles>
+                            <dataStore>${user.home}/Solor/generated-data</dataStore>
+                            <exportFile>${project.build.directory}/tinkar-export-starter-data-pb.zip</exportFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -68,7 +85,7 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <configuration>
                     <namespaceString>${origin.namespace}</namespaceString>
-                    <datastorePath>${project.build.directory}/datastore</datastorePath>
+                    <datastorePath>${user.home}/Solor/generated-data</datastorePath>
                 </configuration>
                 <executions>
                     <execution>
