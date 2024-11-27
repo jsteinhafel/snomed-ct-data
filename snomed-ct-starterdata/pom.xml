@@ -35,7 +35,7 @@
                                 <artifactItem>
                                     <groupId>dev.ikm.tinkar</groupId>
                                     <artifactId>tinkar-starter-data</artifactId>
-                                    <version>1.3.0</version>
+                                    <version>${tinkar-starter-data.version}</version>
                                     <classifier>tinkar-export-pb</classifier>
                                     <type>zip</type>
                                 </artifactItem>
@@ -56,7 +56,7 @@
                         </goals>
                         <configuration>
                             <dataFiles>
-                                <dataFile>${project.build.directory}/starter-data/tinkar-starter-data-reasoned-1.0.0-pb.zip</dataFile>
+                                <dataFile>${project.build.directory}/starter-data/tinkar-starter-data-${tinkar-starter-data.version}-tinkar-export-pb.zip</dataFile>
                             </dataFiles>
                         </configuration>
                     </execution>
