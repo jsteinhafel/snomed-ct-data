@@ -5,9 +5,7 @@ import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.composer.Composer;
-import dev.ikm.tinkar.entity.transaction.Transaction;
-import dev.ikm.tinkar.ext.lang.owl.Rf2OwlToLogicAxiomTransformer;
-import dev.ikm.tinkar.terms.TinkarTerm;
+import dev.ikm.tinkar.entity.EntityService;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -67,11 +65,13 @@ public class SnomedTransformationMojo extends AbstractMojo {
         LOG.info("########## Snomed Transformer Starting...");
         initializeDatastore(datastore);
 
-        Composer composer = new Composer("Snomed Transformer Composer");
+        EntityService.get().beginLoadPhase();
         try {
+            Composer composer = new Composer("Snomed Transformer Composer");
             processFilesFromInput(inputFileOrDirectory, composer);
             composer.commitAllSessions();
         } finally {
+            EntityService.get().endLoadPhase();
             PrimitiveData.stop();
             LOG.info("########## Snomed Transformer Finishing...");
         }
@@ -116,7 +116,7 @@ public class SnomedTransformationMojo extends AbstractMojo {
         if(fileName.contains("Concept")){
             return new ConceptTransformer(namespace);
         } else if(fileName.contains("Definition")){
-            return new ConceptTransformer(namespace);
+            return new DefinitionTransformer(namespace);
         } else if(fileName.contains("Description")){
             return new DescriptionTransformer(namespace);
         } else if(fileName.contains("Language")){
