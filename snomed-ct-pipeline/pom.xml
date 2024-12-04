@@ -26,7 +26,7 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <configuration>
                     <namespaceString>${origin.namespace}</namespaceString>
-                    <datastorePath>${project.build.directory}/datastore</datastorePath>
+                    <datastorePath>${project.build.directory}/../../snomed-ct-starterdata/target/tinkar-starter-data</datastorePath>
                     <inputDirectoryPath>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology</inputDirectoryPath>
                 </configuration>
                 <executions>
