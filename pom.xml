@@ -15,9 +15,9 @@
         <module>snomed-ct-origin</module>
         <module>plugin</module>
         <module>snomed-ct-binding</module>
-        <module>snomed-ct-integration</module>
         <module>snomed-ct-starterdata</module>
         <module>snomed-ct-pipeline</module>
+        <module>snomed-ct-integration</module>
     </modules>
 
     <properties>
@@ -46,7 +46,7 @@
         <!-- starter data -->
         <composer.version>1.5.0</composer.version>
         <tinkar-starter-data.version>1.3.0</tinkar-starter-data.version>
-        <tinkar-core.version>1.77.0</tinkar-core.version>
+        <tinkar-core.version>1.78.0</tinkar-core.version>
     </properties>
 
     <dependencyManagement>
