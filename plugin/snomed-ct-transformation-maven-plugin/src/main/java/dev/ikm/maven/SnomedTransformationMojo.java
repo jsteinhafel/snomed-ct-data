@@ -30,9 +30,11 @@ public class SnomedTransformationMojo extends AbstractMojo {
     String namespaceString;
     @Parameter(property = "datastore.path", required = true)
     private String datastorePath;
-    @Parameter(property = "input.directory", required = true)
+    @Parameter(property = "inputDirectoryPath", required = true)
     private String inputDirectoryPath;
-    @Parameter(property = "input.directory", defaultValue = "Open SpinedArrayStore")
+    @Parameter(property = "dataOutputPath", required = true)
+    private String dataOutputPath;
+    @Parameter(property = "controllerName", defaultValue = "Open SpinedArrayStore")
     private String controllerName;
 
     private UUID namespace;
@@ -42,39 +44,66 @@ public class SnomedTransformationMojo extends AbstractMojo {
             this.namespace = UUID.fromString(namespaceString);
 
             File datastore = new File(datastorePath);
-            File inputFileOrDirectory = new File(inputDirectoryPath);
+            String unzippedData = unzipRawData(inputDirectoryPath);
+            File inputFileOrDirectory = new File(unzippedData);
             validateInputDirectory(inputFileOrDirectory);
 
             transformFile(datastore, inputFileOrDirectory);
         } catch (IllegalArgumentException e) {
             throw new MojoExecutionException("Invalid namespace for UUID formatting");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-//    private String unzipRawData(String zipFile) throws IOException {
-//        byte[] buffer = new byte[1024];
-//        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
-//        ZipEntry zipEntry = zis.getNextEntry();
-//
-//        File newFile = new File(destDir, zipEntry.getName());
-//        while (zipEntry != null) {
-//            if (zipEntry.isDirectory()) {
-//                newFile.mkdirs();
-//            } else {
-//                FileOutputStream fos = new FileOutputStream(newFile);
-//                int len;
-//                while ((len = zis.read(buffer)) > 0) {
-//                    fos.write(buffer, 0, len);
-//                }
-//                fos.close();
-//            }
-//            zipEntry = zis.getNextEntry();
-//        }
-//        zis.closeEntry();
-//        zis.close();
-//
-//        File terminologyDir = new File(destDir, "")
-//    }
+    private String unzipRawData(String zipFilePath) throws IOException {
+        File outputDirectory = new File(dataOutputPath);
+        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zis.getNextEntry()) != null) {
+                File newFile = new File(outputDirectory, zipEntry.getName());
+                if(zipEntry.isDirectory()) {
+                    newFile.mkdirs();
+                } else {
+                    new File(newFile.getParent()).mkdirs();
+                    try(FileOutputStream fos = new FileOutputStream(newFile)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            fos.write(buffer,0,len);
+                        }
+                    }
+                }
+                zis.closeEntry();
+            }
+        }
+        File terminologyFolder = searchTerminologyFolder(outputDirectory);
+
+        if (terminologyFolder != null) {
+            return terminologyFolder.getAbsolutePath();
+        } else {
+            throw new FileNotFoundException("The 'Terminology' folder could not be found...");
+        }
+    }
+
+    private static File searchTerminologyFolder(File dir) {
+        if (dir.isDirectory()){
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if(file.isDirectory() && file.getName().equals("Terminology") &&
+                        file.getParentFile().getName().equals("Full")) {
+                        return file;
+                    }
+                    File found = searchTerminologyFolder(file);
+                    if (found != null) {
+                        return found;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     private void validateInputDirectory(File inputFileOrDirectory) throws MojoExecutionException {
         if(!inputFileOrDirectory.exists()){

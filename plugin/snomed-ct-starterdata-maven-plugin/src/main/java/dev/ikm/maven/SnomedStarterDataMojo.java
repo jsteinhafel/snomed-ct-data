@@ -34,9 +34,9 @@ public class SnomedStarterDataMojo extends AbstractMojo
 {
     @Parameter(property = "origin.namespace", required = true)
     String namespaceString;
-    @Parameter(property = "datastore.path", required = true)
+    @Parameter(property = "datastorePath", required = true)
     private String datastorePath;
-    @Parameter(property = "input.directory", defaultValue = "Open SpinedArrayStore")
+    @Parameter(property = "controllerName", defaultValue = "Open SpinedArrayStore")
     private String controllerName;
 
     private UUID namespace;

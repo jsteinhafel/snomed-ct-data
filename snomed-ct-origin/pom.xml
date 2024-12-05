@@ -12,7 +12,7 @@
     <artifactId>snomed-ct-origin</artifactId>
     <packaging>pom</packaging>
 
-    <name>Snomed CT: Origin</name>
+    <name>snomed-ct-origin</name>
 
 <!--    <distributionManagement>-->
 <!--        <repository>-->
