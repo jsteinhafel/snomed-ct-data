@@ -26,8 +26,9 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <configuration>
                     <namespaceString>${origin.namespace}</namespaceString>
-                    <datastorePath>${project.build.directory}/../../snomed-ct-starterdata/target/tinkar-starter-data</datastorePath>
-                    <inputDirectoryPath>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology</inputDirectoryPath>
+                    <datastorePath>${user.home}/Solor/generated-data</datastorePath>
+                    <inputDirectoryPath>${user.home}/.m2/repository/dev/ikm/snomedct/snomed-ct-origin/${project.version}/snomed-ct-origin-${project.version}-data.zip</inputDirectoryPath>
+                    <dataOutputPath>${project.build.directory}</dataOutputPath>
                 </configuration>
                 <executions>
                     <execution>

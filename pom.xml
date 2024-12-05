@@ -14,10 +14,12 @@
     <modules>
         <module>snomed-ct-origin</module>
         <module>plugin</module>
-        <module>snomed-ct-binding</module>
         <module>snomed-ct-starterdata</module>
+        <module>snomed-ct-binding</module>
         <module>snomed-ct-pipeline</module>
+        <!-- OWL -->
         <module>snomed-ct-integration</module>
+<!--        <module>snomed-ct-owl-transform</module>-->
     </modules>
 
     <properties>
@@ -111,6 +113,11 @@
                 <groupId>dev.ikm.tinkar.ext.owl</groupId>
                 <artifactId>owl-extension</artifactId>
                 <version>${tinkar-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.ikm.tinkar</groupId>
+                <artifactId>tinkar-data-maven-plugin</artifactId>
+                <version>${tinkar-starter-data.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
