@@ -16,7 +16,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -28,7 +32,7 @@ public class SnomedTransformationMojo extends AbstractMojo {
 
     @Parameter(property = "origin.namespace", required = true)
     String namespaceString;
-    @Parameter(property = "datastore.path", required = true)
+    @Parameter(property = "datastorePath", required = true)
     private String datastorePath;
     @Parameter(property = "inputDirectoryPath", required = true)
     private String inputDirectoryPath;
