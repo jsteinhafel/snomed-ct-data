@@ -1,12 +1,10 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -16,7 +14,6 @@ import dev.ikm.tinkar.entity.EntityService;
 import dev.ikm.tinkar.entity.PatternEntityVersion;
 import dev.ikm.tinkar.entity.SemanticRecord;
 import dev.ikm.tinkar.entity.SemanticVersionRecord;
-import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,8 +34,7 @@ public class SnomedAxiomSemanticIT {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
-//        File datastore = new File(System.getProperty("user.home") + "/Solor/snomedct-international_AMIA_Nov_2024");
+        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1"); //"/Solor/generated-data"
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
@@ -71,12 +67,8 @@ public class SnomedAxiomSemanticIT {
                 //pass these args in assertion method
                 long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
                 StateSet snomedAxiomStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
-                EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(columns[3])));
-                EntityProxy.Concept refsetId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(columns[4])));
-//                UUID id = UuidUtil.fromSNOMED(columns[0]);
-//                UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]);
-                UUID id = UuidT5Generator.get(columns[0]);
                 String axiomStr = SnomedUtility.owlAxiomIdsToPublicIds(columns[6]);
+                UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
 
                 if (!assertSnomedAxioms(id, effectiveTime, snomedAxiomStatus, axiomStr)) {
                     notFound++;
