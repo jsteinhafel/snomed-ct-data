@@ -14,15 +14,12 @@
     <name>snomed-ct-starterdata</name>
     <url>http://maven.apache.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>dev.ikm.tinkar</groupId>
                 <artifactId>tinkar-data-maven-plugin</artifactId>
+                <version>${tinkar-starter-data.version}</version>
                 <executions>
                     <execution>
                         <id>load-data</id>
@@ -31,7 +28,7 @@
                         </goals>
                         <configuration>
                             <dataStore>${user.home}/Solor/generated-data</dataStore>
-                            <exportFile>${project.build.directory}/tinkar-export-starter-data-pb.zip</exportFile>
+                            <exportFile>${user.home}/Solor/tinkar-export-starter-data-pb.zip</exportFile>
                         </configuration>
                     </execution>
                 </executions>
