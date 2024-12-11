@@ -34,7 +34,7 @@ public class SnomedAxiomSemanticIT {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1"); //"/Solor/generated-data"
+        File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
@@ -67,14 +67,14 @@ public class SnomedAxiomSemanticIT {
                 //pass these args in assertion method
                 long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
                 StateSet snomedAxiomStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
-                String axiomStr = SnomedUtility.owlAxiomIdsToPublicIds(columns[6]);
+                String owlAxiomStr = SnomedUtility.owlAxiomIdsToPublicIds(columns[6]);
                 UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
 
-                if (!assertSnomedAxioms(id, effectiveTime, snomedAxiomStatus, axiomStr)) {
+                if (!assertSnomedAxioms(id, effectiveTime, snomedAxiomStatus, owlAxiomStr)) {
                     notFound++;
                     bw.write(id + "\t" + columns[1] +
                             "\t" + (snomedAxiomStatus.equals(StateSet.ACTIVE) ? "Active" : "Inactive") +
-                            "\t" + axiomStr + "\n");
+                            "\t" + owlAxiomStr + "\n");
                 }
             }
         }
@@ -95,15 +95,5 @@ public class SnomedAxiomSemanticIT {
 
         return false;
     }
-
-//    @Test
-//    public void singleTestAxiom() {
-//        String idString = "80001735-381a-4c86-a986-a6ebd875f6c7";
-//        UUID id = new UUIDUtility().createUUID(TinkarTerm.OWL_AXIOM_SYNTAX_PATTERN.asUuidArray()[0] + idString);
-//        long effectiveDate = SnomedUtility.snomedTimestampToEpochSeconds("20190731");
-//        String axiomStr = SnomedUtility.owlAxiomIdsToPublicIds("SubClassOf(:42061009 :398334008)");
-//
-//        assertTrue(assertAxiom(id, effectiveDate, StateSet.ACTIVE, axiomStr));
-//    }
 
 }
