@@ -24,7 +24,7 @@
         <module>snomed-ct-binding</module>
         <module>snomed-ct-pipeline</module>
         <module>snomed-ct-owl-transform</module>
-<!--        <module>snomed-ct-integration</module>-->
+        <module>snomed-ct-integration</module>
     </modules>
 
     <properties>
