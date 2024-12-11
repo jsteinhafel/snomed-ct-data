@@ -18,12 +18,41 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>dev.ikm.maven</groupId>
+                <artifactId>tinkar-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>export-java-binding</id>
+                        <goals>
+                            <goal>generate-java-binding</goal>
+                        </goals>
+                        <configuration>
+                            <bindingOutputFile>${user.home}/Solor/TestBinding.java</bindingOutputFile>
+                            <author>Binding Test Author</author>
+                            <packageName>dev.ikm.tinkar.binding.test</packageName>
+                            <namespace>f3051292-ce74-4b2c-b70c-b190594d0532</namespace>
+                            <characterReplacements>
+                                <characterReplacement>
+                                    <character>+</character>
+                                    <replacement>_PLUS</replacement>
+                                </characterReplacement>
+                                <characterReplacement>
+                                    <character>/</character>
+                                    <replacement>_SLASH_</replacement>
+                                </characterReplacement>
+                            </characterReplacements>
+                            <stampConfiguration>DEVELOPMENT_LATEST</stampConfiguration>
+                            <languageConfigurations>
+                                <languageConfiguration>US_ENGLISH_REGULAR_NAME</languageConfiguration>
+                                <languageConfiguration>US_ENGLISH_FULLY_QUALIFIED_NAME</languageConfiguration>
+                            </languageConfigurations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

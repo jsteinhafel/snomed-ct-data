@@ -24,19 +24,9 @@
                 <groupId>dev.ikm.maven</groupId>
                 <artifactId>tinkar-maven-plugin</artifactId>
                 <executions>
-<!--                    <execution>-->
-<!--                        <id>load-data</id>-->
-<!--                        <goals>-->
-<!--                            <goal>load-data</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <dataFiles>-->
-<!--                                <dataFile>${user.home}/Solor/generated-data</dataFile>-->
-<!--                            </dataFiles>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
                     <execution>
                         <id>owl-transform</id>
+                        <phase>install</phase>
                         <goals>
                             <goal>run-owl-transformer</goal>
                         </goals>
