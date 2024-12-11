@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SnomedAxiomSemanticIT {
+public class AxiomSemanticIT {
 
     @BeforeAll
     public static void setup() {
@@ -51,9 +51,10 @@ public class SnomedAxiomSemanticIT {
      * @result Reads content from file and validates Snomed Axiom of Semantics by calling private method assertSnomedAxioms().
      */
     @Test
-    public void testSnomedAxiomSemantics() throws IOException {
+    public void testAxiomSemantics() throws IOException {
         // Given
         String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_sRefset_OWLExpressionFull_INT_20241001.txt";
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_sRefset_OWLExpressionFull_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/snomedaxioms_not_found.txt";
         int notFound = 0;
         // When
