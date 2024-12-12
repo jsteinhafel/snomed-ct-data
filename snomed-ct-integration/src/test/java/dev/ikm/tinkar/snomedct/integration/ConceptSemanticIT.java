@@ -32,7 +32,8 @@ public class ConceptSemanticIT {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
+//        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
+        File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
@@ -50,7 +51,8 @@ public class ConceptSemanticIT {
      */
     @Test
     public void testConceptSemantics() throws IOException {
-        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Concept_Full_INT_20241001.txt";
+//        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Concept_Full_INT_20241001.txt";
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Concept_Full_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
         int notFound = 0;
 
