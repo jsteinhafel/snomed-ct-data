@@ -54,8 +54,9 @@ public class AxiomSemanticIT {
     public void testAxiomSemantics() throws IOException {
         // Given
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_sRefset_OWLExpressionFull_US1000124_20240901.txt";
-        String errorFile = "target/failsafe-reports/snomedaxioms_not_found.txt";
+        String errorFile = "target/failsafe-reports/axioms_not_found.txt";
         int notFound = 0;
+
         // When
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
              BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
@@ -78,6 +79,8 @@ public class AxiomSemanticIT {
                 }
             }
         }
+
+        // Then
         assertEquals(0, notFound, "Unable to find " + notFound + " snomed axiom semantics. Details written to " + errorFile);
     }
 
@@ -92,7 +95,6 @@ public class AxiomSemanticIT {
             String fieldValue = pattern.getFieldWithMeaning(TinkarTerm.AXIOM_SYNTAX, latest.get());
             return latest.isPresent() && fieldValue.equals(axiomStr);
         }
-
         return false;
     }
 
