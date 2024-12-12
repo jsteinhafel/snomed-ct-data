@@ -4,7 +4,7 @@ import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
@@ -36,7 +36,6 @@ public class DescriptionSemanticIT {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-//        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
         File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
@@ -56,10 +55,10 @@ public class DescriptionSemanticIT {
     @Test
     public void testDescriptionSemantics() throws IOException {
         // Given
-//        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Description_Full-en_INT_20241001.txt";
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Description_Full-en_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
         int notFound = 0;
+
         // When
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
              BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
@@ -74,7 +73,7 @@ public class DescriptionSemanticIT {
                 EntityProxy.Concept descriptionType = SnomedUtility.getDescriptionType(columns[6]);
                 String term = columns[7];
                 EntityProxy.Concept caseSensitivityConcept = SnomedUtility.getDescriptionCaseSignificanceConcept(columns[8]);
-                UUID id = UuidUtil.fromSNOMED(columns[0]);
+                UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
 
                 if (!assertDescription(id, term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus)) {
                     notFound++;
@@ -85,6 +84,8 @@ public class DescriptionSemanticIT {
                 }
             }
         }
+
+        // Then
         assertEquals(0, notFound, "Unable to find " + notFound + " description semantics. Details written to " + errorFile);
     }
 

@@ -1,11 +1,10 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -14,7 +13,6 @@ import dev.ikm.tinkar.coordinate.stamp.calculator.StampCalculator;
 import dev.ikm.tinkar.entity.ConceptRecord;
 import dev.ikm.tinkar.entity.ConceptVersionRecord;
 import dev.ikm.tinkar.entity.EntityService;
-import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,11 +26,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class ConceptSemanticIT {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-//        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
         File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
@@ -51,11 +50,12 @@ public class ConceptSemanticIT {
      */
     @Test
     public void testConceptSemantics() throws IOException {
-//        String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Concept_Full_INT_20241001.txt";
+        // Given
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Concept_Full_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
         int notFound = 0;
 
+        // When
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
              BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
             String line;
@@ -64,21 +64,20 @@ public class ConceptSemanticIT {
                 String[] columns = line.split("\\t");
 
                 //pass these args in assertion method
-                UUID id = UuidUtil.fromSNOMED(columns[0]);
+                UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
                 long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
                 StateSet conceptStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
-                EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(columns[3])));
 
                 if (!assertConcept(id, effectiveTime, conceptStatus)) {
                     notFound++;
                     bw.write(id + "\t" + columns[0] +
                             "\t" + (conceptStatus.equals(StateSet.ACTIVE) ? "Active" : "Inactive"));
-//                            "\t" + descriptionType.description() +
-//                            "\t" + caseSensitivityConcept.description() + "\n");
                 }
-
             }
         }
+
+        // Then
+        assertEquals(0, notFound, "Unable to find " + notFound + " concept semantics. Details written to " + errorFile);
     }
 
     private boolean assertConcept(UUID id, long effectiveDate, StateSet activeFlag) {
@@ -86,7 +85,6 @@ public class ConceptSemanticIT {
         StampCalculator stampCalc = StampCoordinateRecord.make(activeFlag, stampPosition).stampCalculator();
         ConceptRecord entity = EntityService.get().getEntityFast(id);
 
-        ConceptVersionRecord latestDescriptionPattern = (ConceptVersionRecord) stampCalc.latest(TinkarTerm.CONCEPT_TYPE).get();
         Latest<ConceptVersionRecord> latest = stampCalc.latest(entity);
         return latest.isPresent();
     }
