@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -25,7 +25,7 @@
         <module>snomed-ct-pipeline</module>
         <!-- OWL -->
         <module>snomed-ct-integration</module>
-<!--        <module>snomed-ct-owl-transform</module>-->
+        <!--        <module>snomed-ct-owl-transform</module>-->
     </modules>
 
     <properties>
@@ -37,7 +37,7 @@
 
         <!-- origin -->
         <origin.working.directory>${project.build.directory}/origin-sources</origin.working.directory>
-        <source.zip>snomedct-us-20240901T120000Z.zip</source.zip>
+        <source.zip>SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z.zip</source.zip>
         <packager.name>IKM Dev</packager.name>
         <origin.url>https://www.nlm.nih.gov/healthit/snomedct/us_edition.html</origin.url>
         <origin.namespace>3094dbd1-60cf-44a6-92e3-0bb32ca4d3de</origin.namespace>

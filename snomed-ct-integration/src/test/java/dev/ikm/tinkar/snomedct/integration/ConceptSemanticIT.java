@@ -1,10 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
 import dev.ikm.tinkar.common.id.PublicIds;
-import dev.ikm.tinkar.common.service.CachingService;
-import dev.ikm.tinkar.common.service.PrimitiveData;
-import dev.ikm.tinkar.common.service.ServiceKeys;
-import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
@@ -16,31 +12,18 @@ import dev.ikm.tinkar.entity.ConceptVersionRecord;
 import dev.ikm.tinkar.entity.EntityService;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
-public class ConceptSemanticIT {
-    @BeforeAll
-    public static void setup() {
-        CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/September2024_ConnectathonDataset_v1");
-        ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
-        PrimitiveData.selectControllerByName("Open SpinedArrayStore");
-        PrimitiveData.start();
-    }
+public class ConceptSemanticIT extends BaseIntegrationTest {
 
-    @AfterAll
-    public static void shutdown() {
-        PrimitiveData.stop();
+    @Test
+    protected void testConceptSemantics() throws Exception {
+        executeTestLogic();
     }
 
     /**
@@ -48,14 +31,13 @@ public class ConceptSemanticIT {
      *
      * @result Reads content from file and validates Concept of Semantics by calling private method assertConcept().
      */
-    @Test
-    public void testConceptSemantics() throws IOException {
+    @Override
+    public void executeTestLogic() throws IOException {
         String sourceFilePath = System.getProperty("user.home") + "/data/SnomedCT_InternationalRF2_PRODUCTION_20241001T120000Z/Full/Terminology/sct2_Concept_Full_INT_20241001.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
         int notFound = 0;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("id")) continue;
@@ -68,15 +50,12 @@ public class ConceptSemanticIT {
                 EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(columns[3])));
 
                 if (!assertConcept(id, effectiveTime, conceptStatus)) {
-                    notFound++;
-                    bw.write(id + "\t" + columns[0] +
-                            "\t" + (conceptStatus.equals(StateSet.ACTIVE) ? "Active" : "Inactive"));
-//                            "\t" + descriptionType.description() +
-//                            "\t" + caseSensitivityConcept.description() + "\n");
+                    logError(errorFile, "Concept not found: " + id);
                 }
 
             }
         }
+        //assertEquals(0, notFound, "Unable to find " + notFound + " concepts. Details written to " + errorFile);
     }
 
     private boolean assertConcept(UUID id, long effectiveDate, StateSet activeFlag) {
