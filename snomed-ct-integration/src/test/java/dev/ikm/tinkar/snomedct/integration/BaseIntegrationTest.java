@@ -7,10 +7,13 @@ import dev.ikm.tinkar.common.service.ServiceProperties;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public abstract class BaseIntegrationTest {
 
@@ -29,12 +32,30 @@ public abstract class BaseIntegrationTest {
     }
 
     //Helper method to handle logging
-    protected void logError(String errorFilePath, String message) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(errorFilePath, true));
-        bw.write(message + "\n");
+    protected void logError(String errorFilePath, String message) {
+        BufferedWriter bw;
+        try {
+            bw = new BufferedWriter(new FileWriter(errorFilePath, true));
+            bw.write(message + "\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    protected void processFileLines(String sourceFilePath, Consumer<String[]> lineProcessor) {
+        String line;
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("id")) continue;
+                String[] columns = line.split("\\t");
+                lineProcessor.accept(columns);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     //enforce implementation in subclasses
-    protected abstract void executeTestLogic() throws Exception;
+    protected abstract void executeTestLogic();
 
 }
