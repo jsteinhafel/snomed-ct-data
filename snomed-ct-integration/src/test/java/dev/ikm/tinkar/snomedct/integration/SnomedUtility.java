@@ -15,6 +15,8 @@
  */
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.slf4j.Logger;
@@ -22,6 +24,10 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.UUID;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SnomedUtility {
 
@@ -91,6 +97,48 @@ public class SnomedUtility {
             default -> throw new RuntimeException("UNRECOGNIZED LANGUAGE CODE");
         }
         return languageConcept;
+    }
+
+    private static Pattern getUrlPattern() {
+        // Expecting URL formatted as shown below
+        // <http://www.w3.org/2002/07/owl#>
+        // Pattern of characters between less-than and greater-than characters
+        return Pattern.compile("<[^>]+>");
+    }
+
+    private static Pattern getIdPattern() {
+        // Expecting a Snomed identifier following a colon as shown below
+        // :609096000
+        // Pattern of at least one numeric character after colon
+        return Pattern.compile("(?<=:)([0-9]+)");
+    }
+
+    private static String urlToPublicId(MatchResult id) {
+        String urlString = id.group();
+        // remove beginning less-than character and ending greater-than character
+        String idString = urlString.substring(1, urlString.length() - 1);
+        // Generate UUID from URL bytes
+        String publicIdString = PublicIds.of(UUID.nameUUIDFromBytes(idString.getBytes())).toString();
+        return publicIdString.replaceAll("\"", "");
+    }
+
+    private static String idToPublicId(MatchResult id) {
+        String idString = id.group();
+        String publicIdString = PublicIds.of(UuidUtil.fromSNOMED(idString)).toString();
+        return publicIdString.replaceAll("\"", "");
+    }
+
+    public static String owlAxiomIdsToPublicIds(String owlExpression) {
+        String publicIdOwlExpression = owlExpression;
+        // Replace URLs with a UUID representation
+        if (owlExpression.contains("<") & owlExpression.contains(">")) {
+            Matcher urlMatcher = getUrlPattern().matcher(publicIdOwlExpression);
+            publicIdOwlExpression = urlMatcher.replaceAll(SnomedUtility::urlToPublicId);
+        }
+        // Replace Snomed identifiers with a UUID representation
+        Matcher idMatcher = getIdPattern().matcher(publicIdOwlExpression);
+        publicIdOwlExpression = idMatcher.replaceAll(SnomedUtility::idToPublicId);
+        return publicIdOwlExpression;
     }
 
 }
