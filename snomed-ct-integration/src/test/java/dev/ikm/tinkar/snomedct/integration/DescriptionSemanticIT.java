@@ -1,9 +1,5 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.service.CachingService;
-import dev.ikm.tinkar.common.service.PrimitiveData;
-import dev.ikm.tinkar.common.service.ServiceKeys;
-import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
@@ -17,34 +13,20 @@ import dev.ikm.tinkar.entity.SemanticRecord;
 import dev.ikm.tinkar.entity.SemanticVersionRecord;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DescriptionSemanticIT {
+public class DescriptionSemanticIT extends BaseIntegrationTest {
 
-    @BeforeAll
-    public static void setup() {
-        CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
-        ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
-        PrimitiveData.selectControllerByName("Open SpinedArrayStore");
-        PrimitiveData.start();
-    }
-
-    @AfterAll
-    public static void shutdown() {
-        PrimitiveData.stop();
+    @Test
+    protected void testDescriptionSemantics() throws Exception {
+        executeTestLogic();
     }
 
     /**
@@ -52,15 +34,14 @@ public class DescriptionSemanticIT {
      *
      * @result Reads content from file and validates Description of Semantics by calling private method assertDescription().
      */
-    @Test
-    public void testDescriptionSemantics() throws IOException {
+    @Override
+    public void executeTestLogic() throws IOException {
         // Given
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Description_Full-en_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
         int notFound = 0;
         // When
-        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
-             BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath))) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("id")) continue;
@@ -76,10 +57,7 @@ public class DescriptionSemanticIT {
 
                 if (!assertDescription(id, term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus)) {
                     notFound++;
-                    bw.write(term + "\t" + id + "\t" + columns[1] +
-                            "\t" + (descriptionStatus.equals(StateSet.ACTIVE) ? "Active" : "Inactive") +
-                            "\t" + descriptionType.description() +
-                            "\t" + caseSensitivityConcept.description() + "\n");
+                    logError(errorFile, "");
                 }
             }
         }
@@ -102,5 +80,4 @@ public class DescriptionSemanticIT {
         }
         return false;
     }
-
 }
