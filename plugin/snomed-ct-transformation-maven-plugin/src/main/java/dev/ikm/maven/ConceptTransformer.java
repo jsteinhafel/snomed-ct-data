@@ -2,7 +2,6 @@ package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.ConceptAssembler;
