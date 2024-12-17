@@ -17,28 +17,22 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefinitionSemanticIT extends BaseIntegrationTest {
-
-
-    @Test
-    protected void testDefinitionSemantics() {
-        executeTestLogic();
-    }
 
     /**
      * Test Definition Semantics.
      *
      * @result Reads content from file and validates Definition of Semantics by calling private method assertDefinition().
      */
-    @Override
-    public void executeTestLogic() {
+    @Test
+    public void testDefinitionSemantics() {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/descriptions_definitions_not_found.txt";
-        int notFound = 0;
-        // When
+        AtomicInteger notFound = new AtomicInteger(0);
 
         processFileLines(sourceFilePath, columns -> {
             UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
@@ -51,7 +45,7 @@ public class DefinitionSemanticIT extends BaseIntegrationTest {
             if (!assertDefinition(id, term, descriptionType, caseSensitivityConcept, effectiveTime, descriptionStatus)) {
                 logError(errorFile, "Definitions not found: " + notFound);
             }
-            assertEquals(0, notFound, "Unable to find " + notFound + " description definition semantics. Details written to " + errorFile);
+            assertEquals(0, notFound.get(), "Unable to find " + notFound.get() + " description definition semantics. Details written to " + errorFile);
         });
     }
 

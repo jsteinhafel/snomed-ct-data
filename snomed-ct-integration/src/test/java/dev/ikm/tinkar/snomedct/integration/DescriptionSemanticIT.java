@@ -16,27 +16,22 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DescriptionSemanticIT extends BaseIntegrationTest {
-
-    @Test
-    protected void testDescriptionSemantics() {
-        executeTestLogic();
-    }
 
     /**
      * Test Description Semantics.
      *
      * @result Reads content from file and validates Description of Semantics by calling private method assertDescription().
      */
-    @Override
-    public void executeTestLogic() {
-        // Given
+    @Test
+    public void testDescriptionSemantics() {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Description_Full-en_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
-        int notFound = 0;
+        AtomicInteger notFound = new AtomicInteger(0);
 
         processFileLines(sourceFilePath, columns -> {
             long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
@@ -50,7 +45,7 @@ public class DescriptionSemanticIT extends BaseIntegrationTest {
                 logError(errorFile, "");
             }
         });
-        assertEquals(0, notFound, "Unable to find " + notFound + " description semantics. Details written to " + errorFile);
+        assertEquals(0, notFound.get(), "Unable to find " + notFound.get() + " description semantics. Details written to " + errorFile);
     }
 
     private boolean assertDescription(UUID id, String term, EntityProxy.Concept nameType, EntityProxy.Concept caseSensitive, long effectiveDate, StateSet activeFlag) {

@@ -13,26 +13,22 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConceptSemanticIT extends BaseIntegrationTest {
-
-    @Test
-    protected void testConceptSemantics() {
-        executeTestLogic();
-    }
 
     /**
      * Test Concepts Semantics.
      *
      * @result Reads content from file and validates Concept of Semantics by calling private method assertConcept().
      */
-    @Override
-    public void executeTestLogic() {
+    @Test
+    public void testConceptSemantics() {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Concept_Full_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
-        int notFound = 0;
+        AtomicInteger notFound = new AtomicInteger(0);
 
         processFileLines(sourceFilePath, columns -> {
             UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
@@ -43,7 +39,7 @@ public class ConceptSemanticIT extends BaseIntegrationTest {
                 logError(errorFile, "Concepts not found: " + notFound);
             }
         });
-        assertEquals(0, notFound, "Unable to find " + notFound + " concepts. Details written to " + errorFile);
+        assertEquals(0, notFound.get(), "Unable to find " + notFound.get() + " concepts. Details written to " + errorFile);
     }
 
     private boolean assertConcept(UUID id, long effectiveDate, StateSet activeFlag) {

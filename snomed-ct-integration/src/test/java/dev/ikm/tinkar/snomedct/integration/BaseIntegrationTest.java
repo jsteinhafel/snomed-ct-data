@@ -55,7 +55,4 @@ public abstract class BaseIntegrationTest {
         }
     }
 
-    //enforce implementation in subclasses
-    protected abstract void executeTestLogic();
-
 }
