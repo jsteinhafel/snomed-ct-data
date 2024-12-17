@@ -1,6 +1,5 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -12,12 +11,12 @@ import dev.ikm.tinkar.entity.EntityService;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ConceptSemanticIT extends BaseIntegrationTest {
+public class ConceptSemanticIT extends AbstractIntegrationTest {
 
     /**
      * Test Concepts Semantics.
@@ -25,30 +24,26 @@ public class ConceptSemanticIT extends BaseIntegrationTest {
      * @result Reads content from file and validates Concept of Semantics by calling private method assertConcept().
      */
     @Test
-    public void testConceptSemantics() {
+    public void testConceptSemantics() throws IOException {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Concept_Full_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
-        AtomicInteger notFound = new AtomicInteger(0);
 
-        processFileLines(sourceFilePath, columns -> {
-            UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
-            long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
-            StateSet conceptStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
+        int notFound = processFile(sourceFilePath, errorFile);
 
-            if (!assertConcept(id, effectiveTime, conceptStatus)) {
-                logError(errorFile, "Concepts not found: " + notFound);
-            }
-        });
-        assertEquals(0, notFound.get(), "Unable to find " + notFound.get() + " concepts. Details written to " + errorFile);
+        assertEquals(0, notFound, "Unable to find " + notFound + " concepts. Details written to " + errorFile);
     }
 
-    private boolean assertConcept(UUID id, long effectiveDate, StateSet activeFlag) {
-        StampPositionRecord stampPosition = StampPositionRecord.make(effectiveDate, TinkarTerm.DEVELOPMENT_PATH.nid());
-        StampCalculator stampCalc = StampCoordinateRecord.make(activeFlag, stampPosition).stampCalculator();
-        ConceptRecord entity = EntityService.get().getEntityFast(id);
+    @Override
+    protected boolean assertLine(String[] columns) {
+        UUID id = uuid(columns[0]);
+        long effectiveDate = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
+        StateSet active = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
 
+        StampPositionRecord stampPosition = StampPositionRecord.make(effectiveDate, TinkarTerm.DEVELOPMENT_PATH.nid());
+        StampCalculator stampCalc = StampCoordinateRecord.make(active, stampPosition).stampCalculator();
+        ConceptRecord entity = EntityService.get().getEntityFast(id);
         Latest<ConceptVersionRecord> latest = stampCalc.latest(entity);
+
         return latest.isPresent();
     }
-
 }
