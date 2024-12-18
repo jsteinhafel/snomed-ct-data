@@ -1,7 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
 import dev.ikm.tinkar.common.id.PublicId;
-import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,17 +31,16 @@ public class DefinitionSemanticIT extends AbstractIntegrationTest {
     public void testDefinitionSemantics() throws IOException {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_US1000124_20240901.txt";
         String errorFile = "target/failsafe-reports/descriptions_definitions_not_found.txt";
-        AtomicInteger notFound = new AtomicInteger(0);
 
-        processFile(sourceFilePath, errorFile);
+        int notFound = processFile(sourceFilePath, errorFile);
 
-        assertEquals(0, notFound.get(), "Unable to find " + notFound.get() + " description definition semantics. Details written to " + errorFile);
+        assertEquals(0, notFound, "Unable to find " + notFound + " description definition semantics. Details written to " + errorFile);
 
     }
 
     @Override
     protected boolean assertLine(String[] columns) {
-        UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
+        UUID id = uuid(columns[0]);
         long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
         StateSet descriptionStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
         EntityProxy.Concept descType = SnomedUtility.getDescriptionType(columns[6]);
