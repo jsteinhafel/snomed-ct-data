@@ -28,7 +28,7 @@ public class DescriptionSemanticIT extends AbstractIntegrationTest {
      */
     @Test
     public void testDescriptionSemantics() throws IOException {
-        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Description_Full-en_US1000124_20240901.txt";
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_InternationalRF2_PRODUCTION_20241201T120000Z/Full/Terminology/sct2_Description_Full-en_INT_20241201.txt";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
 
         int notFound = processFile(sourceFilePath, errorFile);
