@@ -53,7 +53,7 @@ public class AxiomSemanticIT {
     @Test
     public void testAxiomSemantics() throws IOException {
         // Given
-        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_sRefset_OWLExpressionFull_US1000124_20240901.txt";
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_InternationalRF2_PRODUCTION_20241201T120000Z/Full/Terminology/sct2_sRefset_OWLExpressionFull_INT_20241201.txt";
         String errorFile = "target/failsafe-reports/axioms_not_found.txt";
         int notFound = 0;
 
