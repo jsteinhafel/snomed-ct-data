@@ -7,6 +7,8 @@ import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -14,9 +16,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public abstract class AbstractIntegrationTest {
+    Logger log = LoggerFactory.getLogger(ConceptSemanticIT.class);
 
     @AfterAll
     public static void shutdown() {
@@ -31,6 +38,36 @@ public abstract class AbstractIntegrationTest {
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
     }
+
+    protected String findFilePath(String baseDir, String datasetType, String fileKeyword) throws IOException {
+        String dirKeyword;
+
+        if (datasetType.equalsIgnoreCase("International") || datasetType.equalsIgnoreCase("int") || datasetType.equalsIgnoreCase("InternationalRF2")) {
+            dirKeyword = "InternationalRF2";
+        } else if (datasetType.equalsIgnoreCase("us") || datasetType.equalsIgnoreCase("ManagedServiceUS")) {
+            dirKeyword = "ManagedServiceUS";
+        } else {
+            dirKeyword = "";
+        }
+
+        try (Stream<Path> dirStream = Files.walk(Paths.get(baseDir))) {
+            Path targetDir = dirStream.filter(Files::isDirectory)
+                    .filter(path -> path.toFile().getAbsoluteFile().toString().toLowerCase().contains(dirKeyword.toLowerCase()))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Target DIRECTORY not found for: " + dirKeyword));
+
+            try (Stream<Path> fileStream = Files.walk(targetDir)) {
+                Path targetFile = fileStream.filter(Files::isRegularFile)
+                        .filter(path -> path.toFile().getAbsoluteFile().toString().toLowerCase().contains(fileKeyword.toLowerCase()))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Target FILE not found for: " + fileKeyword));
+
+                return targetFile.toAbsolutePath().toString();
+            }
+        }
+
+    }
+
 
     protected int processFile(String sourceFilePath, String errorFile) throws IOException {
         int notFound = 0;
