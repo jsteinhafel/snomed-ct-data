@@ -30,14 +30,12 @@ public class DefinitionSemanticIT extends AbstractIntegrationTest {
     @Test
     public void testDefinitionSemantics() throws IOException {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
-        //"/SnomedCT_InternationalRF2_PRODUCTION_20241201T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_INT_20241201.txt";
         String errorFile = "target/failsafe-reports/descriptions_definitions_not_found.txt";
 
         String absolutePath = findFilePath(sourceFilePath, "uS", "definition");
         int notFound = processFile(absolutePath, errorFile);
-        assertEquals(0, notFound, "Unable to find " + notFound + " description definition semantics. Details written to " + errorFile);
 
-        log.info("We found file: " + absolutePath);
+        assertEquals(0, notFound, "Unable to find " + notFound + " description definition semantics. Details written to " + errorFile);
     }
 
     @Override

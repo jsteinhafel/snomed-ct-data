@@ -40,7 +40,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected String findFilePath(String baseDir, String datasetType, String fileKeyword) throws IOException {
-        String dirKeyword;
+        final String dirKeyword;
 
         if (datasetType.equalsIgnoreCase("International") || datasetType.equalsIgnoreCase("int") || datasetType.equalsIgnoreCase("InternationalRF2")) {
             dirKeyword = "InternationalRF2";
@@ -82,6 +82,7 @@ public abstract class AbstractIntegrationTest {
                 }
             }
         }
+        log.info("We found file: " + sourceFilePath);
         return notFound;
     }
 

@@ -26,13 +26,12 @@ public class ConceptSemanticIT extends AbstractIntegrationTest {
     @Test
     public void testConceptSemantics() throws IOException {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
-        //"/SnomedCT_InternationalRF2_PRODUCTION_20241201T120000Z/Full/Terminology/sct2_Concept_Full_INT_20241201.txt";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
 
         String absolutePath = findFilePath(sourceFilePath, "uS", "concept");
         int notFound = processFile(absolutePath, errorFile);
+
         assertEquals(0, notFound, "Unable to find " + notFound + " concepts. Details written to " + errorFile);
-        log.info("We found file: " + absolutePath);
     }
 
     @Override
