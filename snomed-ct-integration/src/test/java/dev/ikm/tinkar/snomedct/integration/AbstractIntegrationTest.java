@@ -39,22 +39,14 @@ public abstract class AbstractIntegrationTest {
         PrimitiveData.start();
     }
 
-    protected String findFilePath(String baseDir, String datasetType, String fileKeyword) throws IOException {
-        final String dirKeyword;
+    protected String findFilePath(String baseDir, String fileKeyword) throws IOException {
 
-        if (datasetType.equalsIgnoreCase("International") || datasetType.equalsIgnoreCase("int") || datasetType.equalsIgnoreCase("InternationalRF2")) {
-            dirKeyword = "InternationalRF2";
-        } else if (datasetType.equalsIgnoreCase("us") || datasetType.equalsIgnoreCase("ManagedServiceUS")) {
-            dirKeyword = "ManagedServiceUS";
-        } else {
-            dirKeyword = "";
-        }
 
         try (Stream<Path> dirStream = Files.walk(Paths.get(baseDir))) {
             Path targetDir = dirStream.filter(Files::isDirectory)
-                    .filter(path -> path.toFile().getAbsoluteFile().toString().toLowerCase().contains(dirKeyword.toLowerCase()))
+//                    .filter(path -> path.toFile().getAbsoluteFile().toString().toLowerCase().contains(dirKeyword.toLowerCase()))
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Target DIRECTORY not found for: " + dirKeyword));
+                    .orElseThrow(() -> new RuntimeException("Target DIRECTORY not found"));
 
             try (Stream<Path> fileStream = Files.walk(targetDir)) {
                 Path targetFile = fileStream.filter(Files::isRegularFile)

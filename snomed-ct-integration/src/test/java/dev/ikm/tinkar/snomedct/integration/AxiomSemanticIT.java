@@ -30,7 +30,7 @@ public class AxiomSemanticIT extends AbstractIntegrationTest {
         String baseDir = "../snomed-ct-origin/target/origin-sources";
         String errorFile = "target/failsafe-reports/axioms_not_found.txt";
 
-        String absolutePath = findFilePath(baseDir, "us", "owl");
+        String absolutePath = findFilePath(baseDir, "owl");
         int notFound = processFile(absolutePath, errorFile);
 
         assertEquals(0, notFound, "Unable to find " + notFound + " snomed axiom semantics. Details written to " + errorFile);

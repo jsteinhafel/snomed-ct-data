@@ -31,7 +31,7 @@ public class DescriptionSemanticIT extends AbstractIntegrationTest {
         String baseDir = "../snomed-ct-origin/target/origin-sources";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
 
-        String absolutePath = findFilePath(baseDir, "us", "description");
+        String absolutePath = findFilePath(baseDir, "description");
         int notFound = processFile(absolutePath, errorFile);
 
         assertEquals(0, notFound, "Unable to find " + notFound + " description semantics. Details written to " + errorFile);
