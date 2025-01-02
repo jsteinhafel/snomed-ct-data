@@ -28,10 +28,11 @@ public class DescriptionSemanticIT extends AbstractIntegrationTest {
      */
     @Test
     public void testDescriptionSemantics() throws IOException {
-        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_Description_Full-en_US1000124_20240901.txt";
+        String baseDir = "../snomed-ct-origin/target/origin-sources";
         String errorFile = "target/failsafe-reports/descriptions_not_found.txt";
 
-        int notFound = processFile(sourceFilePath, errorFile);
+        String absolutePath = findFilePath(baseDir, "description");
+        int notFound = processFile(absolutePath, errorFile);
 
         assertEquals(0, notFound, "Unable to find " + notFound + " description semantics. Details written to " + errorFile);
     }

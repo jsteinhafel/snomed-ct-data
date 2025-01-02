@@ -29,13 +29,13 @@ public class DefinitionSemanticIT extends AbstractIntegrationTest {
      */
     @Test
     public void testDefinitionSemantics() throws IOException {
-        String sourceFilePath = "../snomed-ct-origin/target/origin-sources/SnomedCT_ManagedServiceUS_PRODUCTION_US1000124_20240901T120000Z/Full/Terminology/sct2_TextDefinition_Full-en_US1000124_20240901.txt";
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
         String errorFile = "target/failsafe-reports/descriptions_definitions_not_found.txt";
 
-        int notFound = processFile(sourceFilePath, errorFile);
+        String absolutePath = findFilePath(sourceFilePath, "definition");
+        int notFound = processFile(absolutePath, errorFile);
 
         assertEquals(0, notFound, "Unable to find " + notFound + " description definition semantics. Details written to " + errorFile);
-
     }
 
     @Override
