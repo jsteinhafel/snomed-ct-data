@@ -55,14 +55,14 @@ public class DefinitionTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long epochTime = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleConcept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[MODULE_ID])));
+                        EntityProxy.Concept moduleConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
 
                         Session session = composer.open(status, epochTime, author, moduleConcept, path);
 
                         if (!data[ID].equals(previousRowId)) {
                             previousRowId = data[ID];
-                            previousReferencedConcept = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[CONCEPT_ID])));
-                            previousDefinitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidT5Generator.get(namespace, data[ID])));
+                            previousReferencedConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[CONCEPT_ID])));
+                            previousDefinitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
                         }
 
                         EntityProxy.Concept languageConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
