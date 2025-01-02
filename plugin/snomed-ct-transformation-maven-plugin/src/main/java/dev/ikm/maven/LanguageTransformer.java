@@ -2,6 +2,7 @@ package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
+import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.SemanticAssembler;
@@ -51,9 +52,9 @@ public class LanguageTransformer extends AbstractTransformer {
                     .forEach((data) -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long epochTime = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[MODULE_ID])));
+                        EntityProxy.Concept moduleId = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
 
-                        EntityProxy.Concept referencedComponent = EntityProxy.Concept.make(PublicIds.of(UuidT5Generator.get(namespace, data[REFERENCED_COMPONENT_ID])));
+                        EntityProxy.Concept referencedComponent = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[REFERENCED_COMPONENT_ID])));
 
                         Session session = composer.open(status, epochTime, author, moduleId, path);
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
