@@ -1,6 +1,5 @@
 package dev.ikm.tinkar.snomedct.integration;
 
-import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -41,8 +40,7 @@ public class AxiomSemanticIT extends AbstractIntegrationTest {
         long effectiveTime = SnomedUtility.snomedTimestampToEpochSeconds(columns[1]);
         StateSet snomedAxiomStatus = Integer.parseInt(columns[2]) == 1 ? StateSet.ACTIVE : StateSet.INACTIVE;
         String owlAxiomStr = SnomedUtility.owlAxiomIdsToPublicIds(columns[6]);
-        UUID id = UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), columns[0]); //Need hardcode ID on namespace for Snomed
-
+        UUID id = uuid(columns[0]);
 
         StampPositionRecord stampPosition = StampPositionRecord.make(effectiveTime, TinkarTerm.DEVELOPMENT_PATH.nid());
         StampCalculator stampCalc = StampCoordinateRecord.make(snomedAxiomStatus, stampPosition).stampCalculator();
