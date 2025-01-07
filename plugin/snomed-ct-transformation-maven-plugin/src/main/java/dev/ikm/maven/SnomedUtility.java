@@ -16,10 +16,10 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.entity.Entity;
 import dev.ikm.tinkar.entity.EntityVersion;
-import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.EntityProxy.Concept;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.slf4j.Logger;
@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 
 
 public class SnomedUtility {
@@ -85,33 +85,33 @@ public class SnomedUtility {
         return publicIdString.replaceAll("\"", "");
     }
 
-    private static Pattern getUrlPattern() {
-        // Expecting URL formatted as shown below
+    private static Pattern getFullIriPattern() {
+        // A full IRI is an IRI between "<" and ">"
+        // A Prefix declaration is a full IRI
+        // An Ontology declaration is a full IRI or an abbreviated IRI
+        // but Snomed only uses full IRI, so...
         // <http://www.w3.org/2002/07/owl#>
         // Pattern of characters between less-than and greater-than characters
         return Pattern.compile("<[^>]+>");
     }
 
-    private static String urlToPublicId(MatchResult id) {
-        String urlString = id.group();
-        // remove beginning less-than character and ending greater-than character
-        String idString = urlString.substring(1, urlString.length()-1);
+    private static String fullIriToPublicId(MatchResult id) {
+        String fullIriString = id.group();
+        // the IRI for the public id does not include "<" or ">"
+        String iriString = fullIriString.substring(1, fullIriString.length() - 1);
         // Generate UUID from URL bytes
-        String publicIdString = PublicIds.of(UUID.nameUUIDFromBytes(idString.getBytes())).toString();
-        return publicIdString.replaceAll("\"", "");
+        String publicIdString = PublicIds.of(UUID.nameUUIDFromBytes(iriString.getBytes())).toString();
+        return "<" + publicIdString.replaceAll("\"", "") + ">";
     }
 
     public static String owlAxiomIdsToPublicIds(String owlExpression) {
         String publicIdOwlExpression = owlExpression;
-        // Replace URLs with a UUID representation
-        if (owlExpression.contains("<") & owlExpression.contains(">")) {
-            Matcher urlMatcher = getUrlPattern().matcher(publicIdOwlExpression);
-            publicIdOwlExpression = urlMatcher.replaceAll(SnomedUtility::urlToPublicId);
-        }
+        // Replace IRIs with a UUID representation
+        Matcher urlMatcher = getFullIriPattern().matcher(publicIdOwlExpression);
+        publicIdOwlExpression = urlMatcher.replaceAll(SnomedUtility::fullIriToPublicId);
         // Replace Snomed identifiers with a UUID representation
         Matcher idMatcher = getIdPattern().matcher(publicIdOwlExpression);
         publicIdOwlExpression = idMatcher.replaceAll(SnomedUtility::idToPublicId);
         return publicIdOwlExpression;
     }
-
 }
