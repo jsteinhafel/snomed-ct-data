@@ -39,8 +39,15 @@ public abstract class AbstractIntegrationTest {
         PrimitiveData.start();
     }
 
+    /**
+     * Find FilePath
+     *
+     * @param baseDir
+     * @param fileKeyword
+     * @return absolutePath
+     * @throws IOException
+     */
     protected String findFilePath(String baseDir, String fileKeyword) throws IOException {
-
 
         try (Stream<Path> dirStream = Files.walk(Paths.get(baseDir))) {
             Path targetDir = dirStream.filter(Files::isDirectory)
@@ -60,7 +67,14 @@ public abstract class AbstractIntegrationTest {
 
     }
 
-
+    /**
+     * Process sourceFilePath
+     *
+     * @param sourceFilePath
+     * @param errorFile
+     * @return File status, either Found/NotFound
+     * @throws IOException
+     */
     protected int processFile(String sourceFilePath, String errorFile) throws IOException {
         int notFound = 0;
         try (BufferedReader br = new BufferedReader(new FileReader(sourceFilePath));
@@ -80,7 +94,7 @@ public abstract class AbstractIntegrationTest {
 
     protected UUID uuid(String id) {
         return UuidUtil.fromSNOMED(id);
-        //return UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), id);
+//        return UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), id);
     }
 
     protected abstract boolean assertLine(String[] columns);

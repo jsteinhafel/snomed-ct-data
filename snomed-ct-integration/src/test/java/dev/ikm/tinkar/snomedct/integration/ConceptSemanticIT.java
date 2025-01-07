@@ -28,7 +28,7 @@ public class ConceptSemanticIT extends AbstractIntegrationTest {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
         String errorFile = "target/failsafe-reports/concepts_not_found.txt";
 
-        String absolutePath = findFilePath(sourceFilePath, "concept");
+        String absolutePath = findFilePath(sourceFilePath, "sct2_concept");
         int notFound = processFile(absolutePath, errorFile);
 
         assertEquals(0, notFound, "Unable to find " + notFound + " concepts. Details written to " + errorFile);
