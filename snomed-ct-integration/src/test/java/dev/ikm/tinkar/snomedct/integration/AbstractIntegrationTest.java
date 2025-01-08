@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public abstract class AbstractIntegrationTest {
-    Logger log = LoggerFactory.getLogger(ConceptSemanticIT.class);
+    Logger log = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
     @AfterAll
     public static void shutdown() {
@@ -33,7 +33,8 @@ public abstract class AbstractIntegrationTest {
     @BeforeAll
     public static void setup() {
         CachingService.clearAll();
-        File datastore = new File(System.getProperty("user.home") + "/Solor/generated-data"); //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
+        //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
+        File datastore = new File(System.getProperty("datastorePath")); // property set in pom.xml
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
