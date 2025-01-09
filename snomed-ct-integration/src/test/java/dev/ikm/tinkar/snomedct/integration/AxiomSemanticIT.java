@@ -1,5 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.tinkar.coordinate.Calculators;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -47,7 +48,7 @@ public class AxiomSemanticIT extends AbstractIntegrationTest {
         SemanticRecord entity = EntityService.get().getEntityFast(id);
 
         if (entity != null) {
-            PatternEntityVersion pattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.OWL_AXIOM_SYNTAX_PATTERN).get();
+            PatternEntityVersion pattern = (PatternEntityVersion) Calculators.Stamp.DevelopmentLatest().latest(TinkarTerm.OWL_AXIOM_SYNTAX_PATTERN).get();
             Latest<SemanticVersionRecord> latest = stampCalc.latest(entity);
             String fieldValue = pattern.getFieldWithMeaning(TinkarTerm.AXIOM_SYNTAX, latest.get());
             return latest.isPresent() && fieldValue.equals(owlAxiomStr);
