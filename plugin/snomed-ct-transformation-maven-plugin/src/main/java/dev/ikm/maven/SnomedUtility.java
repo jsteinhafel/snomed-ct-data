@@ -20,6 +20,7 @@ import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.entity.Entity;
 import dev.ikm.tinkar.entity.EntityVersion;
+import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.EntityProxy.Concept;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.slf4j.Logger;
@@ -113,5 +114,41 @@ public class SnomedUtility {
         Matcher idMatcher = getIdPattern().matcher(publicIdOwlExpression);
         publicIdOwlExpression = idMatcher.replaceAll(SnomedUtility::idToPublicId);
         return publicIdOwlExpression;
+    }
+
+
+    /**
+     * transforms caseSensitivity code into concept
+     *
+     * @param caseSensitivityCode represents case sensitivity of a description
+     * @return case sensitivity concept
+     */
+    public static EntityProxy.Concept getDescriptionCaseSignificanceConcept(String caseSensitivityCode) {
+        EntityProxy.Concept caseSensitivityConcept = null;
+        switch (caseSensitivityCode) {
+            case "900000000000448009" -> caseSensitivityConcept = TinkarTerm.DESCRIPTION_NOT_CASE_SENSITIVE;
+            case "900000000000017005" -> caseSensitivityConcept = TinkarTerm.DESCRIPTION_CASE_SENSITIVE;
+            case "900000000000020002" ->
+                    caseSensitivityConcept = TinkarTerm.DESCRIPTION_INITIAL_CHARACTER_CASE_SENSITIVE;
+            default -> throw new RuntimeException("UNRECOGNIZED CASE SENSITIVITY CODE");
+        }
+        return caseSensitivityConcept;
+    }
+
+    /**
+     * transform descriptionType into concept
+     *
+     * @param descriptionTypeCode String representation the type of descriptions
+     * @return description type concept
+     */
+    public static EntityProxy.Concept getDescriptionType(String descriptionTypeCode) {
+        EntityProxy.Concept descriptionTypeConcept = null;
+        switch (descriptionTypeCode) {
+            case "900000000000550004" -> descriptionTypeConcept = TinkarTerm.DEFINITION_DESCRIPTION_TYPE;
+            case "900000000000003001" -> descriptionTypeConcept = TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE;
+            case "900000000000013009" -> descriptionTypeConcept = TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE;
+            default -> throw new RuntimeException("UNRECOGNIZED DESCRIPTION TYPE CODE");
+        }
+        return descriptionTypeConcept;
     }
 }

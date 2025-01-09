@@ -1,5 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.maven.SnomedUtility;
 import dev.ikm.tinkar.component.Component;
 import dev.ikm.tinkar.coordinate.Calculators;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
