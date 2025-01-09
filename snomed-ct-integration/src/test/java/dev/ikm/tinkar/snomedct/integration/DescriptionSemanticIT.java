@@ -1,6 +1,8 @@
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.maven.SnomedUtility;
 import dev.ikm.tinkar.component.Component;
+import dev.ikm.tinkar.coordinate.Calculators;
 import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
 import dev.ikm.tinkar.coordinate.stamp.StampPositionRecord;
 import dev.ikm.tinkar.coordinate.stamp.StateSet;
@@ -52,7 +54,7 @@ public class DescriptionSemanticIT extends AbstractIntegrationTest {
         StampCalculator stampCalc = StampCoordinateRecord.make(descriptionStatus, stampPosition).stampCalculator();
         SemanticRecord entity = EntityService.get().getEntityFast(id);
 
-        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) stampCalc.latest(TinkarTerm.DESCRIPTION_PATTERN).get();
+        PatternEntityVersion latestDescriptionPattern = (PatternEntityVersion) Calculators.Stamp.DevelopmentLatest().latest(TinkarTerm.DESCRIPTION_PATTERN).get();
         Latest<SemanticVersionRecord> latest = stampCalc.latest(entity);
         if (latest.isPresent()) {
             Component descriptionType = latestDescriptionPattern.getFieldWithMeaning(TinkarTerm.DESCRIPTION_TYPE, latest.get());
