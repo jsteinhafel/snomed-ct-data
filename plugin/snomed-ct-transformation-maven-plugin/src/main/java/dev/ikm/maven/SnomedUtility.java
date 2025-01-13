@@ -151,4 +151,10 @@ public class SnomedUtility {
         }
         return descriptionTypeConcept;
     }
+
+    public static UUID generateUUID(UUID namespace, String id){
+        final String name = "org.snomed." + id;
+
+        return UuidT5Generator.get(namespace,name);
+    }
 }
