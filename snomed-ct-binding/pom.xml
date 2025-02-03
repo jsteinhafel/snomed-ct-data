@@ -4,7 +4,7 @@
     <parent>
         <groupId>dev.ikm.snomedct</groupId>
         <artifactId>snomed-ct-data</artifactId>
-        <version>US_PRODUCTION_US1000124_20240901T120000Z-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>dev.ikm.maven</groupId>
@@ -34,6 +34,7 @@
                             <author>Binding Test Author</author>
                             <packageName>dev.ikm.tinkar.binding.test</packageName>
                             <namespace>f3051292-ce74-4b2c-b70c-b190594d0532</namespace>
+			                <dataStore>${user.home}/Solor/generated-data</dataStore>
                             <characterReplacements>
                                 <characterReplacement>
                                     <character>+</character>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>dev.ikm.snomedct</groupId>
         <artifactId>snomed-ct-data</artifactId>
-        <version>US_PRODUCTION_US1000124_20240901T120000Z-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>dev.ikm.maven</groupId>
@@ -30,6 +30,9 @@
                         <goals>
                             <goal>run-owl-transformer</goal>
                         </goals>
+			            <configuration>
+			                <dataStore>${user.home}/Solor/generated-data</dataStore>
+			            </configuration>
                     </execution>
                 </executions>
             </plugin>
