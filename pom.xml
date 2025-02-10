@@ -12,7 +12,7 @@
 
     <groupId>dev.ikm.snomedct</groupId>
     <artifactId>snomed-ct-data</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-IKDT-844-update-snomed-ct-data-to-use-unzip-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>SNOMED CT Data</name>
@@ -174,7 +174,7 @@
                 <plugin>
                     <groupId>dev.ikm.maven</groupId>
                     <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
-                    <version>1.0.0-SNAPSHOT</version>
+                    <version>1.0.0-IKDT-844-update-snomed-ct-data-to-use-unzip-SNAPSHOT</version>
                 </plugin>
             </plugins>
         </pluginManagement>
