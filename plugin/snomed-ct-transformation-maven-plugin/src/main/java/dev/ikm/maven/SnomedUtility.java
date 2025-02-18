@@ -80,9 +80,9 @@ public class SnomedUtility {
         return Pattern.compile("(?<=:)([0-9]+)");
     }
 
-    private static String idToPublicId(MatchResult id) {
+    private static String idToPublicId(UUID namespace, MatchResult id) {
         String idString = id.group();
-        String publicIdString = PublicIds.of(UuidUtil.fromSNOMED(idString)).toString();
+        String publicIdString = PublicIds.of(generateUUID(namespace, idString)).toString();
         return publicIdString.replaceAll("\"", "");
     }
 
@@ -105,14 +105,14 @@ public class SnomedUtility {
         return "<" + publicIdString.replaceAll("\"", "") + ">";
     }
 
-    public static String owlAxiomIdsToPublicIds(String owlExpression) {
+    public static String owlAxiomIdsToPublicIds(UUID namespace, String owlExpression) {
         String publicIdOwlExpression = owlExpression;
         // Replace IRIs with a UUID representation
         Matcher urlMatcher = getFullIriPattern().matcher(publicIdOwlExpression);
         publicIdOwlExpression = urlMatcher.replaceAll(SnomedUtility::fullIriToPublicId);
         // Replace Snomed identifiers with a UUID representation
         Matcher idMatcher = getIdPattern().matcher(publicIdOwlExpression);
-        publicIdOwlExpression = idMatcher.replaceAll(SnomedUtility::idToPublicId);
+        publicIdOwlExpression = idMatcher.replaceAll(m -> idToPublicId(namespace, m));
         return publicIdOwlExpression;
     }
 
@@ -150,5 +150,11 @@ public class SnomedUtility {
             default -> throw new RuntimeException("UNRECOGNIZED DESCRIPTION TYPE CODE");
         }
         return descriptionTypeConcept;
+    }
+
+    public static UUID generateUUID(UUID namespace, String id){
+        final String name = "org.snomed." + id;
+
+        return UuidT5Generator.get(namespace,name);
     }
 }

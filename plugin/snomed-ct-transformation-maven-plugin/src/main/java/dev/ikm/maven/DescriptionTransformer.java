@@ -56,8 +56,8 @@ public class DescriptionTransformer extends AbstractTransformer{
                         EntityProxy.Concept languageTypeConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
                         EntityProxy.Concept caseSensitivityConcept = TransformationHelper.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE]);
 
-                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[CONCEPT_ID])));
-                        EntityProxy.Semantic definitionSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
+                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace,data[CONCEPT_ID])));
+                        EntityProxy.Semantic definitionSemantic = EntityProxy.Semantic.make(PublicIds.of(SnomedUtility.generateUUID(namespace,data[ID])));
 
                         Session session = composer.open(status, time, author, moduleId, path);
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
