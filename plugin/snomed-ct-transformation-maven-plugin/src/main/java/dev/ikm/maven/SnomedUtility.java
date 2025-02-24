@@ -151,4 +151,9 @@ public class SnomedUtility {
         }
         return descriptionTypeConcept;
     }
+    
+    public static Concept getSnomedIdentifierSchemeConcept(){
+        Concept snomedIntID = Concept.make(PublicIds.of(UuidUtil.fromSNOMED("705113004")));
+        return snomedIntID;
+    }
 }
