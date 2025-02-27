@@ -82,7 +82,7 @@ public abstract class AbstractIntegrationTest {
              BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("id")) continue;
+                if ((line.startsWith("id")) || (line.startsWith("alternateIdentifier"))) continue;
                 if (!assertLine(line.split("\\t"))) {
                     notFound++;
                     bw.write(line);
