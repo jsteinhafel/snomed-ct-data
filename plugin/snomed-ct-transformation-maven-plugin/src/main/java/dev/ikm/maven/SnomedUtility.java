@@ -80,9 +80,9 @@ public class SnomedUtility {
         return Pattern.compile("(?<=:)([0-9]+)");
     }
 
-    private static String idToPublicId(MatchResult id) {
+    private static String idToPublicId(UUID namespace, MatchResult id) {
         String idString = id.group();
-        String publicIdString = PublicIds.of(UuidUtil.fromSNOMED(idString)).toString();
+        String publicIdString = PublicIds.of(generateUUID(namespace, idString)).toString();
         return publicIdString.replaceAll("\"", "");
     }
 
@@ -96,23 +96,23 @@ public class SnomedUtility {
         return Pattern.compile("<[^>]+>");
     }
 
-    private static String fullIriToPublicId(MatchResult id) {
+    private static String fullIriToPublicId(UUID namespace, MatchResult id) {
         String fullIriString = id.group();
         // the IRI for the public id does not include "<" or ">"
         String iriString = fullIriString.substring(1, fullIriString.length() - 1);
         // Generate UUID from URL bytes
-        String publicIdString = PublicIds.of(UUID.nameUUIDFromBytes(iriString.getBytes())).toString();
+        String publicIdString = PublicIds.of(UuidT5Generator.get(namespace, iriString)).toString();
         return "<" + publicIdString.replaceAll("\"", "") + ">";
     }
 
-    public static String owlAxiomIdsToPublicIds(String owlExpression) {
+    public static String owlAxiomIdsToPublicIds(UUID namespace, String owlExpression) {
         String publicIdOwlExpression = owlExpression;
         // Replace IRIs with a UUID representation
         Matcher urlMatcher = getFullIriPattern().matcher(publicIdOwlExpression);
-        publicIdOwlExpression = urlMatcher.replaceAll(SnomedUtility::fullIriToPublicId);
+        publicIdOwlExpression = urlMatcher.replaceAll(m -> fullIriToPublicId(namespace, m));
         // Replace Snomed identifiers with a UUID representation
         Matcher idMatcher = getIdPattern().matcher(publicIdOwlExpression);
-        publicIdOwlExpression = idMatcher.replaceAll(SnomedUtility::idToPublicId);
+        publicIdOwlExpression = idMatcher.replaceAll(m -> idToPublicId(namespace, m));
         return publicIdOwlExpression;
     }
 
@@ -151,7 +151,10 @@ public class SnomedUtility {
         }
         return descriptionTypeConcept;
     }
-    
+
+    public static UUID generateUUID(UUID namespace, String id) {
+        return UuidT5Generator.get(namespace, id);
+    }
     public static Concept getSnomedIdentifierSchemeConcept(){
         Concept snomedIntID = Concept.make(PublicIds.of(UuidUtil.fromSNOMED("705113004")));
         return snomedIntID;

@@ -1,7 +1,6 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.template.AxiomSyntax;
@@ -48,7 +47,7 @@ public class AxiomSyntaxTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = data[ACTIVE].equals("1") ? State.ACTIVE : State.INACTIVE;
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept module = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
+                        EntityProxy.Concept module = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[MODULE_ID])));
 
                         Session session = composer.open(status, time, author, module, path);
                         configureSemanticsForConcept(session, data);
@@ -65,10 +64,10 @@ public class AxiomSyntaxTransformer extends AbstractTransformer {
      * @param columns line from OWL expression file split on tabs
      */
     private void configureSemanticsForConcept(Session session, String[] columns) {
-        String owlExpressionWithPublicIds = SnomedUtility.owlAxiomIdsToPublicIds(columns[OWL_EXPRESSION]);
+        String owlExpressionWithPublicIds = SnomedUtility.owlAxiomIdsToPublicIds(namespace, columns[OWL_EXPRESSION]);
 
-        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(columns[REFERENCED_COMPONENT_ID])));
-        EntityProxy.Semantic axiomSemantic = EntityProxy.Semantic.make(PublicIds.of(UuidUtil.fromSNOMED(columns[ID])));
+        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, columns[REFERENCED_COMPONENT_ID])));
+        EntityProxy.Semantic axiomSemantic = EntityProxy.Semantic.make(PublicIds.of(SnomedUtility.generateUUID(namespace, columns[ID])));
         previousRowId = columns[ID];
 
         session.compose(new AxiomSyntax()
