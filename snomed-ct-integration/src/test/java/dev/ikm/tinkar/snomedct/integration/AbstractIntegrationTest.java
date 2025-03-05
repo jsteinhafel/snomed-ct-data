@@ -1,5 +1,6 @@
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.maven.SnomedUtility;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
@@ -82,7 +83,7 @@ public abstract class AbstractIntegrationTest {
              BufferedWriter bw = new BufferedWriter(new FileWriter(errorFile))) {
             String line;
             while ((line = br.readLine()) != null) {
-                if ((line.startsWith("id")) || (line.startsWith("alternateIdentifier"))) continue;
+                if (line.startsWith("id") || line.startsWith("alternateIdentifier")) continue;
                 if (!assertLine(line.split("\\t"))) {
                     notFound++;
                     bw.write(line);
@@ -94,8 +95,7 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected UUID uuid(String id) {
-        return UuidUtil.fromSNOMED(id);
-//        return UuidT5Generator.get(UUID.fromString("3094dbd1-60cf-44a6-92e3-0bb32ca4d3de"), id);
+        return SnomedUtility.generateUUID(UuidUtil.SNOMED_NAMESPACE, id);
     }
 
     protected abstract boolean assertLine(String[] columns);
