@@ -18,7 +18,6 @@ package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicId;
 import dev.ikm.tinkar.common.id.PublicIds;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.ConceptAssembler;
@@ -30,9 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.UUID;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class IdentifierTransformer extends AbstractTransformer {
@@ -63,13 +62,13 @@ public class IdentifierTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
+                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[MODULE_ID])));
                         Session session = composer.open(status, time, author, moduleIdConcept, path);
 
                         //PublicId publicId = PublicIds.of(UuidUtil.fromSNOMED(data[REFCOMPID]));
                         // EntityProxy.Concept concept = EntityProxy.Concept.make(publicId);
                         
-                        PublicId identifierSchemeId = PublicIds.of(UuidUtil.fromSNOMED(data[IDENTIFIER_SCHEME_ID]));
+                        PublicId identifierSchemeId = PublicIds.of(SnomedUtility.generateUUID(namespace, data[IDENTIFIER_SCHEME_ID]));
                         EntityProxy.Concept concept = EntityProxy.Concept.make(identifierSchemeId);
                         
                         if (!data[ID].equals(previousRowId)) {
