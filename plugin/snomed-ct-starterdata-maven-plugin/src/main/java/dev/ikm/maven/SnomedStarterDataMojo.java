@@ -1,5 +1,6 @@
 package dev.ikm.maven;
 
+import dev.ikm.tinkar.common.id.IntIds;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
@@ -8,11 +9,15 @@ import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.ConceptAssembler;
-import dev.ikm.tinkar.composer.template.*;
+import dev.ikm.tinkar.composer.assembler.SemanticAssembler;
+import dev.ikm.tinkar.composer.template.Definition;
+import dev.ikm.tinkar.composer.template.FullyQualifiedName;
+import dev.ikm.tinkar.composer.template.Identifier;
+import dev.ikm.tinkar.composer.template.StatedAxiom;
+import dev.ikm.tinkar.composer.template.Synonym;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.State;
 import dev.ikm.tinkar.terms.TinkarTerm;
-
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -25,10 +30,6 @@ import java.util.UUID;
 import static dev.ikm.tinkar.terms.TinkarTerm.DESCRIPTION_NOT_CASE_SENSITIVE;
 import static dev.ikm.tinkar.terms.TinkarTerm.ENGLISH_LANGUAGE;
 
-/**
- * Hello world!
- *
- */
 @Mojo(name = "run-snomed-starterdata", defaultPhase = LifecyclePhase.INSTALL)
 public class SnomedStarterDataMojo extends AbstractMojo
 {
@@ -39,11 +40,10 @@ public class SnomedStarterDataMojo extends AbstractMojo
     @Parameter(property = "controllerName", defaultValue = "Open SpinedArrayStore")
     private String controllerName;
 
-    private UUID namespace;
     public void execute() throws MojoExecutionException
     {
         try {
-            this.namespace = UUID.fromString(namespaceString);
+            UUID namespace = UUID.fromString(namespaceString);
             File datastore = new File(datastorePath);
 
             CachingService.clearAll();
@@ -111,6 +111,20 @@ public class SnomedStarterDataMojo extends AbstractMojo
                             .isA(TinkarTerm.IDENTIFIER_SOURCE)
                     )
             );
+
+            // needed for US editions to function properly
+            EntityProxy.Concept snomedCoreModule = EntityProxy.Concept.make("SNOMED CT Core Module", UuidT5Generator.get(namespace, "900000000000207008"));
+            EntityProxy.Concept snomedUsModule = EntityProxy.Concept.make("SNOMED CT US Module",  UuidT5Generator.get(namespace, "731000124108"));
+            session.compose((ConceptAssembler conceptAssembler) -> conceptAssembler
+                    .concept(snomedCoreModule));
+            session.compose((ConceptAssembler conceptAssembler) -> conceptAssembler
+                    .concept(snomedUsModule));
+            session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
+                    .reference(snomedUsModule)
+                    .pattern(TinkarTerm.MODULE_ORIGINS_PATTERN)
+                    .fieldValues(fieldVals -> fieldVals
+                            .with(IntIds.set.of(snomedCoreModule.nid()))));
+
             composer.commitSession(session);
             PrimitiveData.stop();
         } catch (Exception e) {
