@@ -1,7 +1,6 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
-import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.composer.Composer;
 import dev.ikm.tinkar.composer.Session;
 import dev.ikm.tinkar.composer.assembler.ConceptAssembler;
@@ -49,9 +48,8 @@ public class ConceptTransformer extends AbstractTransformer {
                     .forEach(data -> {
                         State status = Integer.parseInt(data[ACTIVE]) == 1 ? State.ACTIVE : State.INACTIVE;
                         long time = SnomedUtility.snomedTimestampToEpochSeconds(data[EFFECTIVE_TIME]);
-                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[MODULE_ID])));
-
-                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(UuidUtil.fromSNOMED(data[ID])));
+                        EntityProxy.Concept moduleIdConcept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[MODULE_ID])));
+                        EntityProxy.Concept concept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace,data[ID])));
 
                         Session session = composer.open(status, time, author, moduleIdConcept, path);
                         if(!data[ID].equals(previousRowId)) {

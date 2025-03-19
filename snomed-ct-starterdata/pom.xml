@@ -39,7 +39,6 @@
                 <version>1.0.0-SNAPSHOT</version>
                 <configuration>
                     <namespaceString>${origin.namespace}</namespaceString>
-		            <dataStore>${user.home/Solor/generated-data</dataStore>
                     <datastorePath>${user.home}/Solor/generated-data</datastorePath>
                 </configuration>
                 <executions>
