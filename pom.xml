@@ -12,7 +12,7 @@
 
     <groupId>dev.ikm.snomedct</groupId>
     <artifactId>snomed-ct-data</artifactId>
-    <version>1.0.0-IKDT-878-bring-in-snomed-ct-data-bom-dependency-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>SNOMED CT Data</name>
@@ -169,7 +169,7 @@
                 <plugin>
                     <groupId>dev.ikm.maven</groupId>
                     <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
-                    <version>1.0.0-IKDT-878-bring-in-snomed-ct-data-bom-dependency-SNAPSHOT</version>
+                    <version>1.0.0-SNAPSHOT</version>
                 </plugin>
             </plugins>
         </pluginManagement>
