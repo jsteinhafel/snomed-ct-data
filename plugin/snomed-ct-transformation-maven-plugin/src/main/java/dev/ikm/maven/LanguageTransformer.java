@@ -59,8 +59,8 @@ public class LanguageTransformer extends AbstractTransformer {
                                 .pattern(TransformationHelper.getDialectPattern(data[REFSET_ID]))
                                 .reference(referencedComponent)
                                 .fieldValues(fieldValues -> fieldValues
-                                        .with(TransformationHelper.getDialectAccceptability(data[ACCEPTABILITY_ID]))
-                                ));
+                                        .with(EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[ACCEPTABILITY_ID])))
+                                )));
                     });
         } catch(IOException e) {
             LOG.warn("Error parsing language file");

@@ -112,6 +112,50 @@ public class SnomedStarterDataMojo extends AbstractMojo
                     )
             );
 
+            EntityProxy.Concept descriptionType = EntityProxy.Concept.make("Description Type", TinkarTerm.DESCRIPTION_TYPE.uuids()[0], UuidT5Generator.get(namespace,"900000000000446008"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(descriptionType));
+
+            EntityProxy.Concept fullySpecifiedName = EntityProxy.Concept.make("Fully Specified Name", TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.uuids()[0], TinkarTerm.FULLY_QUALIFIED_NAME_DESCRIPTION_TYPE.uuids()[1], UuidT5Generator.get(namespace,"900000000000003001"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(fullySpecifiedName));
+
+            EntityProxy.Concept synonym = EntityProxy.Concept.make("Synonym", TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE.uuids()[0], TinkarTerm.REGULAR_NAME_DESCRIPTION_TYPE.uuids()[1], UuidT5Generator.get(namespace,"900000000000013009"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(synonym));
+
+            EntityProxy.Concept definition = EntityProxy.Concept.make("Definition", TinkarTerm.DEFINITION_DESCRIPTION_TYPE.uuids()[0], UuidT5Generator.get(namespace,"900000000000550004"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(definition));
+
+            EntityProxy.Concept caseSignificance = EntityProxy.Concept.make("Case significance", TinkarTerm.DESCRIPTION_CASE_SIGNIFICANCE.uuids()[0], TinkarTerm.DESCRIPTION_CASE_SIGNIFICANCE.uuids()[1], UuidT5Generator.get(namespace,"900000000000447004"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(caseSignificance));
+
+            EntityProxy.Concept entireTermCaseInsensitive = EntityProxy.Concept.make("Entire term case insensitive", TinkarTerm.DESCRIPTION_NOT_CASE_SENSITIVE.uuids()[0], UuidT5Generator.get(namespace,"900000000000448009"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(entireTermCaseInsensitive));
+
+            EntityProxy.Concept entireTermCaseSensitive = EntityProxy.Concept.make("Entire term case sensitive", TinkarTerm.DESCRIPTION_CASE_SENSITIVE.uuids()[0], UuidT5Generator.get(namespace,"900000000000017005"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(entireTermCaseSensitive));
+
+            EntityProxy.Concept initialCharCaseSensitive = EntityProxy.Concept.make("Initial character case sensitive", TinkarTerm.DESCRIPTION_INITIAL_CHARACTER_CASE_SENSITIVE.uuids()[0], UuidT5Generator.get(namespace,"900000000000020002"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(initialCharCaseSensitive));
+
+            EntityProxy.Concept acceptability = EntityProxy.Concept.make("Acceptability", TinkarTerm.DESCRIPTION_ACCEPTABILITY.uuids()[0], UuidT5Generator.get(namespace,"900000000000511003"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(acceptability));
+
+            EntityProxy.Concept acceptable = EntityProxy.Concept.make("Acceptable", TinkarTerm.ACCEPTABLE.uuids()[0], UuidT5Generator.get(namespace,"900000000000549004"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(acceptable));
+
+            EntityProxy.Concept preferred = EntityProxy.Concept.make("Preferred", TinkarTerm.PREFERRED.uuids()[0], UuidT5Generator.get(namespace,"900000000000548007"));
+            session.compose((ConceptAssembler concept) -> concept
+                    .concept(preferred));
+
             // needed for US editions to function properly
             EntityProxy.Concept snomedCoreModule = EntityProxy.Concept.make("SNOMED CT Core Module", UuidT5Generator.get(namespace, "900000000000207008"));
             EntityProxy.Concept snomedUsModule = EntityProxy.Concept.make("SNOMED CT US Module",  UuidT5Generator.get(namespace, "731000124108"));

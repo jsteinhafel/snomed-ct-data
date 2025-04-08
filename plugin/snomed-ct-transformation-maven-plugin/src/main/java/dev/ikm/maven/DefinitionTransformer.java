@@ -64,8 +64,8 @@ public class DefinitionTransformer extends AbstractTransformer {
                         }
 
                         EntityProxy.Concept languageConcept = TransformationHelper.getLanguageConcept(data[LANGUAGE_CODE]);
-                        EntityProxy.Concept caseSignificanceConcept = TransformationHelper.getDescriptionCaseSignificanceConcept(data[CASE_SIGNIFICANCE_ID]);
-                        EntityProxy.Concept descriptionTypeConcept = TransformationHelper.getDescriptionType(data[TYPE_ID]);
+                        EntityProxy.Concept caseSignificanceConcept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[CASE_SIGNIFICANCE_ID])));
+                        EntityProxy.Concept descriptionTypeConcept = EntityProxy.Concept.make(PublicIds.of(SnomedUtility.generateUUID(namespace, data[TYPE_ID])));
 
                         session.compose((SemanticAssembler semanticAssembler) -> semanticAssembler
                                 .semantic(previousDefinitionSemantic)
