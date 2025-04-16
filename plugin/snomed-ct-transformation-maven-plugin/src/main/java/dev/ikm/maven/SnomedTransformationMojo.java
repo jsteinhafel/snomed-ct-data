@@ -38,6 +38,8 @@ public class SnomedTransformationMojo extends AbstractMojo {
     private String dataOutputPath;
     @Parameter(property = "controllerName", defaultValue = "Open SpinedArrayStore")
     private String controllerName;
+    @Parameter(property = "skipUnzip", defaultValue = "false")
+    private boolean skipUnzip;
 
     private UUID namespace;
 
@@ -46,8 +48,18 @@ public class SnomedTransformationMojo extends AbstractMojo {
             this.namespace = UUID.fromString(namespaceString);
 
             File datastore = new File(datastorePath);
-            String unzippedData = unzipRawData(inputDirectoryPath);
-            File inputFileOrDirectory = new File(unzippedData);
+            LOG.info("inputDirectoryPath: " + inputDirectoryPath);
+            File inputFileOrDirectory;
+            if (skipUnzip) {
+                // Let lucene shut down???
+                //Thread.sleep(10000);
+                inputFileOrDirectory = new File(inputDirectoryPath);
+            } else {
+                String unzippedData = unzipRawData(inputDirectoryPath);
+                LOG.info("unzippedData: " + unzippedData);
+                inputFileOrDirectory = new File(unzippedData);
+            }
+            LOG.info("inputFileOrDirectory: " + inputFileOrDirectory);
             validateInputDirectory(inputFileOrDirectory);
 
             transformFile(datastore, inputFileOrDirectory);

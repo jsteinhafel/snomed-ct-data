@@ -26,19 +26,50 @@ import java.util.stream.Stream;
 public abstract class AbstractIntegrationTest {
     Logger log = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
+    protected static int stated_count = -1;
+    protected static int active_count = -1;
+    protected static int inactive_count = -1;
+    protected static int expected_supercs_cnt = -1;
+    protected static int expected_non_snomed_cnt = 299;
+    protected static int expected_miss_cnt = 0;
+    protected static int expected_pharma_miss_cnt = 0;
+    protected static int expected_other_miss_cnt = 0;
+
     @AfterAll
     public static void shutdown() {
         PrimitiveData.stop();
     }
 
     @BeforeAll
-    public static void setup() {
+    public static void setup() throws IOException {
         CachingService.clearAll();
         //Note. Dataset needed to be generated within repo, with command 'mvn clean install'
         File datastore = new File(System.getProperty("datastorePath")); // property set in pom.xml
         ServiceProperties.set(ServiceKeys.DATA_STORE_ROOT, datastore);
         PrimitiveData.selectControllerByName("Open SpinedArrayStore");
         PrimitiveData.start();
+        String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
+        String absolutePath = findFilePath(sourceFilePath, "Concept");
+        if (absolutePath.contains("INT_")) {
+            if (absolutePath.contains("20241201")) {
+                stated_count = 397848;
+                active_count = 370185;
+                inactive_count = 27663;
+                expected_supercs_cnt = 604717;
+            } else if (absolutePath.contains("20250101")) {
+                stated_count = 399051;
+                active_count = 371231;
+                inactive_count = 27820;
+                expected_supercs_cnt = 606768;
+            }
+        } else if (absolutePath.contains("US")) {
+            if (absolutePath.contains("20250301")) {
+                stated_count = 407086;
+                active_count = 378584;
+                inactive_count = 28502;
+                expected_supercs_cnt = 620167;
+            }
+        }
     }
 
     /**
@@ -49,7 +80,7 @@ public abstract class AbstractIntegrationTest {
      * @return absolutePath
      * @throws IOException
      */
-    protected String findFilePath(String baseDir, String fileKeyword) throws IOException {
+    protected static String findFilePath(String baseDir, String fileKeyword) throws IOException {
 
         try (Stream<Path> dirStream = Files.walk(Paths.get(baseDir))) {
             Path targetDir = dirStream.filter(Files::isDirectory)
