@@ -107,7 +107,7 @@ public class DataBuilderIT extends AbstractIntegrationTest{
                 assertNull(us_con);
             }
         }
-        System.out.println("***JTD: roletypes " + snomedOntology.getRoleTypes().size());
+
         for (RoleType role : snomedOntology.getRoleTypes()) {
             role.setName(snomedOntology.getFsn(role.getId()));
             int nid = ElkSnomedData.getNid(role.getId());

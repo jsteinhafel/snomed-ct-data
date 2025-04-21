@@ -61,6 +61,11 @@ public abstract class AbstractIntegrationTest {
                 active_count = 371231;
                 inactive_count = 27820;
                 expected_supercs_cnt = 606768;
+            } else if (absolutePath.contains("20250301")) {
+                stated_count = 400646;
+                active_count = 372705;
+                inactive_count = 27941;
+                expected_supercs_cnt = 610427;
             }
         } else if (absolutePath.contains("US")) {
             if (absolutePath.contains("20250301")) {
