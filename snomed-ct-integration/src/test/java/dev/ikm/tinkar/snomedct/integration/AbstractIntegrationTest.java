@@ -6,6 +6,13 @@ import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
+import dev.ikm.tinkar.coordinate.Coordinates;
+import dev.ikm.tinkar.coordinate.view.ViewCoordinateRecord;
+import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculator;
+import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculatorWithCache;
+import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
+import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedDataBuilder;
+import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.Logger;
@@ -132,6 +139,31 @@ public abstract class AbstractIntegrationTest {
 
     protected UUID uuid(String id) {
         return SnomedUtility.generateUUID(UuidUtil.SNOMED_NAMESPACE, id);
+    }
+
+
+    /**
+     * Methods used within classes SnomedDataBuilderIT, SnomedCompareIT, SnomedClassifierIT
+     */
+    protected ElkSnomedData buildSnomedData() throws Exception {
+        ViewCalculator viewCalculator = getViewCalculator();
+        ElkSnomedData data = new ElkSnomedData();
+        ElkSnomedDataBuilder builder = new ElkSnomedDataBuilder(viewCalculator,
+                TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN, data);
+        builder.build();
+        return data;
+    }
+
+    protected Path getWritePath(String filePart) throws IOException {
+        Path path = Paths.get("target", filePart + ".txt");
+        Files.createDirectories(path.getParent());
+        return path;
+    }
+
+    protected ViewCalculator getViewCalculator() {
+        ViewCoordinateRecord vcr = Coordinates.View.DefaultView();
+
+        return ViewCalculatorWithCache.getCalculator(vcr);
     }
 
     protected abstract boolean assertLine(String[] columns);

@@ -74,6 +74,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>3.5.2</version>
                 <configuration>
+                    <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <datastorePath>${user.home}/Solor/generated-data</datastorePath>
                     </systemPropertyVariables>
