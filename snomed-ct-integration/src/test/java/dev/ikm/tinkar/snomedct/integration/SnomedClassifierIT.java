@@ -9,12 +9,7 @@ import dev.ikm.elk.snomed.model.Concept;
 import dev.ikm.tinkar.common.service.PluggableService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
-import dev.ikm.tinkar.coordinate.Coordinates;
-import dev.ikm.tinkar.coordinate.view.ViewCoordinateRecord;
-import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculator;
-import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculatorWithCache;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
-import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedDataBuilder;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedReasonerService;
 import dev.ikm.tinkar.reasoner.service.ReasonerService;
 import dev.ikm.tinkar.terms.TinkarTerm;
@@ -22,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,7 +104,7 @@ public class SnomedClassifierIT extends AbstractIntegrationTest{
                 assertTrue(parents.isEmpty());
                 // has a parent in the db
                 assertEquals(1, sups.size());
-                assertEquals(TinkarTerm.ROOT_VERTEX.nid(), reasoner.getSuperConcepts(nid).iterator().next());
+                assertEquals(TinkarTerm.PHENOMENON.nid(), reasoner.getSuperConcepts(nid).iterator().next());
                 continue;
             } else {
                 assertNotNull(parents);
