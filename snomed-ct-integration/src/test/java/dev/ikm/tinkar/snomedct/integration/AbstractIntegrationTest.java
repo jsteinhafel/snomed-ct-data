@@ -37,7 +37,7 @@ public abstract class AbstractIntegrationTest {
     protected static int active_count = -1;
     protected static int inactive_count = -1;
     protected static int expected_supercs_cnt = -1;
-    protected static int expected_non_snomed_cnt = 299;
+    protected static int expected_non_snomed_cnt = 300;
     protected static int expected_miss_cnt = 0;
     protected static int expected_pharma_miss_cnt = 0;
     protected static int expected_other_miss_cnt = 0;
@@ -59,27 +59,27 @@ public abstract class AbstractIntegrationTest {
         String absolutePath = findFilePath(sourceFilePath, "Concept");
         if (absolutePath.contains("INT_")) {
             if (absolutePath.contains("20241201")) {
-                stated_count = 397848;
-                active_count = 370185;
+                stated_count = 397849;
+                active_count = 370186;
                 inactive_count = 27663;
-                expected_supercs_cnt = 604717;
+                expected_supercs_cnt = 604718;
             } else if (absolutePath.contains("20250101")) {
-                stated_count = 399051;
-                active_count = 371231;
+                stated_count = 399052;
+                active_count = 371232;
                 inactive_count = 27820;
-                expected_supercs_cnt = 606768;
+                expected_supercs_cnt = 606769;
             } else if (absolutePath.contains("20250301")) {
-                stated_count = 400646;
-                active_count = 372705;
+                stated_count = 400647;
+                active_count = 372706;
                 inactive_count = 27941;
-                expected_supercs_cnt = 610427;
+                expected_supercs_cnt = 610428;
             }
         } else if (absolutePath.contains("US")) {
             if (absolutePath.contains("20250301")) {
-                stated_count = 407086;
-                active_count = 378584;
+                stated_count = 407087;
+                active_count = 378585;
                 inactive_count = 28502;
-                expected_supercs_cnt = 620167;
+                expected_supercs_cnt = 620168;
             }
         }
     }
