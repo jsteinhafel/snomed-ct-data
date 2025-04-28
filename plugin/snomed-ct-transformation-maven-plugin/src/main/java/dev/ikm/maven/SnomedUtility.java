@@ -16,6 +16,7 @@
 package dev.ikm.maven;
 
 import dev.ikm.tinkar.common.id.PublicIds;
+import dev.ikm.tinkar.common.util.time.DateTimeUtil;
 import dev.ikm.tinkar.common.util.uuid.UuidT5Generator;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.entity.Entity;
@@ -26,8 +27,6 @@ import dev.ikm.tinkar.terms.TinkarTerm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -47,13 +46,7 @@ public class SnomedUtility {
      * @return long value of epochTime
      */
     public static long snomedTimestampToEpochSeconds(String effectiveTime) {
-        long epochTime;
-        try {
-            epochTime = new SimpleDateFormat("yyyyMMdd").parse(effectiveTime).getTime();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        return epochTime;
+        return DateTimeUtil.compressedDateParse(effectiveTime);
     }
 
     /**
