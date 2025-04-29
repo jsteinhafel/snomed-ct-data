@@ -18,7 +18,7 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest{
 
     @Test
     public void statedPattern() throws Exception {
-        ViewCalculator viewCalculator = getViewCalculator();
+        ViewCalculator viewCalculator = PrimitiveDataTestUtil.getViewCalculator();
         LogicCoordinateRecord logicCoordinateRecord = viewCalculator.logicCalculator().logicCoordinateRecord();
         assertEquals(TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN.nid(),
                 logicCoordinateRecord.statedAxiomsPatternNid());
@@ -26,7 +26,7 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest{
 
     @Test
     public void count() throws Exception {
-        ViewCalculator viewCalculator = getViewCalculator();
+        ViewCalculator viewCalculator = PrimitiveDataTestUtil.getViewCalculator();
         AtomicInteger cnt = new AtomicInteger();
         AtomicInteger active_cnt = new AtomicInteger();
         AtomicInteger inactive_cnt = new AtomicInteger();
