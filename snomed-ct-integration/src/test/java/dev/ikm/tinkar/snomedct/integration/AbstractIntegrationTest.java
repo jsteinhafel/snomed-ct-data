@@ -6,20 +6,19 @@ import dev.ikm.elk.snomed.model.Concept;
 import dev.ikm.maven.SnomedUtility;
 import dev.ikm.tinkar.common.id.PublicId;
 import dev.ikm.tinkar.common.service.CachingService;
+import dev.ikm.tinkar.common.service.PluggableService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
-import dev.ikm.tinkar.coordinate.Coordinates;
 import dev.ikm.tinkar.coordinate.stamp.calculator.Latest;
-import dev.ikm.tinkar.coordinate.view.ViewCoordinateRecord;
 import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculator;
-import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculatorWithCache;
 import dev.ikm.tinkar.entity.EntityService;
 import dev.ikm.tinkar.entity.PatternEntityVersion;
 import dev.ikm.tinkar.entity.SemanticEntityVersion;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedDataBuilder;
+import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedReasonerService;
 import dev.ikm.tinkar.reasoner.service.ReasonerService;
 import dev.ikm.tinkar.terms.EntityProxy;
 import dev.ikm.tinkar.terms.TinkarTerm;
@@ -162,36 +161,10 @@ public abstract class AbstractIntegrationTest {
 
 
     /**
-     * Methods used within classes SnomedDataBuilderIT, SnomedCompareIT, SnomedClassifierIT
+     * ****************************************************************************************************
+     * CODE OBTAINED FROM ElkSnomedTestBase.java / reasoner-elk-snomed module / tinkar-core repo
      */
-//    protected ElkSnomedData buildSnomedData() throws Exception {
-//        ViewCalculator viewCalculator = getViewCalculator();
-//        ElkSnomedData data = new ElkSnomedData();
-//        ElkSnomedDataBuilder builder = new ElkSnomedDataBuilder(viewCalculator,
-//                TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN, data);
-//        builder.build();
-//        return data;
-//    }
-//
-//    protected Path getWritePath(String filePart) throws IOException {
-//        Path path = Paths.get("target", filePart + ".txt");
-//        Files.createDirectories(path.getParent());
-//        return path;
-//    }
-//
-//    protected ViewCalculator getViewCalculator() {
-//        ViewCoordinateRecord vcr = Coordinates.View.DefaultView();
-//
-//        return ViewCalculatorWithCache.getCalculator(vcr);
-//    }
-
-    /**
-     * CODE OBTAINED FROM ElkSnomedTestBase.java/tinkar-core repo
-     */
-    protected static String test_case;
-
     protected Path getWritePath(String filePart) throws IOException {
-//        Path path = Paths.get("target", test_case, test_case + "-" + filePart + ".txt");
         Path path = Paths.get("target", filePart + ".txt");
         LOG.info("Write path: " + path);
         Files.createDirectories(path.getParent());
@@ -199,7 +172,6 @@ public abstract class AbstractIntegrationTest {
     }
 
     private Path getExpectPath(String filePart) {
-//        Path path = Paths.get("src", "test", "resources", test_case, test_case + "-" + filePart + ".txt");
         Path path = Paths.get("target", filePart + ".txt");
         LOG.info("Expect patch: " + path);
         assumeTrue(Files.exists(path));
@@ -264,15 +236,15 @@ public abstract class AbstractIntegrationTest {
         return lines;
     }
 
-//	public ReasonerService initReasonerService() {
-//		ReasonerService rs = PluggableService.load(ReasonerService.class).stream()
-//				.filter(x -> x.type().getSimpleName().equals(ElkSnomedReasonerService.class.getSimpleName())) //
-//				.findFirst().get().get();
-//		rs.init(PrimitiveDataTestUtil.getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
-//				TinkarTerm.EL_PLUS_PLUS_INFERRED_AXIOMS_PATTERN);
-//		rs.setProgressUpdater(null);
-//		return rs;
-//	}
+	public ReasonerService initReasonerService() {
+		ReasonerService rs = PluggableService.load(ReasonerService.class).stream()
+				.filter(x -> x.type().getSimpleName().equals(ElkSnomedReasonerService.class.getSimpleName())) //
+				.findFirst().get().get();
+		rs.init(PrimitiveDataTestUtil.getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
+				TinkarTerm.EL_PLUS_PLUS_INFERRED_AXIOMS_PATTERN);
+		rs.setProgressUpdater(null);
+		return rs;
+	}
 
     public ArrayList<String> getSupercs(ReasonerService rs) {
         ArrayList<String> lines = new ArrayList<>();
@@ -287,28 +259,28 @@ public abstract class AbstractIntegrationTest {
         return lines;
     }
 
-//	public ArrayList<String> runSnomedReasonerService() throws Exception {
-//		LOG.info("runSnomedReasonerService");
-//		ReasonerService rs = initReasonerService();
-//		rs.extractData();
-//		rs.loadData();
-//		rs.computeInferences();
-//		Files.createDirectories(getWritePath("supercs").getParent());
-//		Path path = getWritePath("supercs");
-//		ArrayList<String> lines = getSupercs(rs);
-//		Files.write(path, lines);
-//		return lines;
-//	}
+	public ArrayList<String> runSnomedReasonerService() throws Exception {
+		LOG.info("runSnomedReasonerService");
+		ReasonerService rs = initReasonerService();
+		rs.extractData();
+		rs.loadData();
+		rs.computeInferences();
+		Files.createDirectories(getWritePath("supercs").getParent());
+		Path path = getWritePath("supercs");
+		ArrayList<String> lines = getSupercs(rs);
+		Files.write(path, lines);
+		return lines;
+	}
 
-//	public ReasonerService runReasonerServiceNNF() throws Exception {
-//		LOG.info("runReasonerServiceNNF");
-//		ReasonerService rs = initReasonerService();
-//		rs.extractData();
-//		rs.loadData();
-//		rs.computeInferences();
-//		rs.buildNecessaryNormalForm();
-//		return rs;
-//	}
+	public ReasonerService runReasonerServiceNNF() throws Exception {
+		LOG.info("runReasonerServiceNNF");
+		ReasonerService rs = initReasonerService();
+		rs.extractData();
+		rs.loadData();
+		rs.computeInferences();
+		rs.buildNecessaryNormalForm();
+		return rs;
+	}
 
     public int getPrimordialCount() throws Exception {
         ViewCalculator primordial_vc = PrimitiveDataTestUtil.getViewCalculatorPrimordial();
@@ -369,11 +341,10 @@ public abstract class AbstractIntegrationTest {
                 });
         return cnt.intValue();
     }
-    /*
-    * ****************************************************************************************************
-    * ****************************************************************************************************
+    /**
+     * ****************************************************************************************************
+     * ****************************************************************************************************
      */
-
 
     protected abstract boolean assertLine(String[] columns);
 }
