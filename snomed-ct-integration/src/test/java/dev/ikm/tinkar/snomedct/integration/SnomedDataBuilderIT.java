@@ -37,9 +37,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SnomedDataBuilderBaseIT extends AbstractIntegrationTest {
+public class SnomedDataBuilderIT extends AbstractIntegrationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SnomedDataBuilderBaseIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SnomedDataBuilderIT.class);
 
     @Test
     public void statedPattern() throws Exception {

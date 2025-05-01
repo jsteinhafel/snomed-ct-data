@@ -45,9 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SnomedClassifierBaseIT extends AbstractIntegrationTest {
+public class SnomedClassifierIT extends AbstractIntegrationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SnomedClassifierBaseIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SnomedClassifierIT.class);
 
     @Test
     public void supercs() throws Exception {

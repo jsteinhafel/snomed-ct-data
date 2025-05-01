@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class SnomedCompareBaseIT extends AbstractIntegrationTest {
+public class SnomedCompareIT extends AbstractIntegrationTest {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SnomedCompareBaseIT.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SnomedCompareIT.class);
 
 	public boolean compareEquals(Object expect, Object actual, String msg) {
 		if (Objects.equals(expect, actual))
