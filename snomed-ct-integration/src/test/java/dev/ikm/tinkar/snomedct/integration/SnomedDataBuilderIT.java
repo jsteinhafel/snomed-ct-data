@@ -43,7 +43,7 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest {
 
     @Test
     public void statedPattern() throws Exception {
-        ViewCalculator viewCalculator = PrimitiveDataTestUtil.getViewCalculator();
+        ViewCalculator viewCalculator = getViewCalculator();
         LogicCoordinateRecord logicCoordinateRecord = viewCalculator.logicCalculator().logicCoordinateRecord();
         assertEquals(TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN.nid(),
                 logicCoordinateRecord.statedAxiomsPatternNid());
@@ -54,7 +54,7 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
         Path concepts_file = Paths.get(findFilePath(sourceFilePath, "sct2_Concept_Snapshot_INT_"));
 
-        ViewCalculator viewCalculator = PrimitiveDataTestUtil.getViewCalculator();
+        ViewCalculator viewCalculator = getViewCalculator();
         AtomicInteger cnt = new AtomicInteger();
         AtomicInteger active_cnt = new AtomicInteger();
         AtomicInteger inactive_cnt = new AtomicInteger();
@@ -100,7 +100,7 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest {
     }
 
     public int getPrimordialCount() throws Exception {
-        ViewCalculator primordial_vc = PrimitiveDataTestUtil.getViewCalculatorPrimordial();
+        ViewCalculator primordial_vc = getViewCalculatorPrimordial();
         AtomicInteger cnt = new AtomicInteger();
         AtomicInteger active_cnt = new AtomicInteger();
         AtomicInteger inactive_cnt = new AtomicInteger();
@@ -123,12 +123,12 @@ public class SnomedDataBuilderIT extends AbstractIntegrationTest {
     }
 
     public int getPrimordialSctidCount() throws Exception {
-        ViewCalculator primordial_vc = PrimitiveDataTestUtil.getViewCalculatorPrimordial();
+        ViewCalculator primordial_vc = getViewCalculatorPrimordial();
         AtomicInteger cnt = new AtomicInteger();
         primordial_vc.forEachSemanticVersionOfPattern(TinkarTerm.IDENTIFIER_PATTERN.nid(),
                 (semanticEntityVersion, _) -> {
                     int conceptNid = semanticEntityVersion.referencedComponentNid();
-                    ViewCalculator vc = PrimitiveDataTestUtil.getViewCalculator();
+                    ViewCalculator vc = getViewCalculator();
                     Latest<PatternEntityVersion> latestIdPattern = vc
                             .latestPatternEntityVersion(TinkarTerm.IDENTIFIER_PATTERN);
                     EntityService.get().forEachSemanticForComponentOfPattern(conceptNid,

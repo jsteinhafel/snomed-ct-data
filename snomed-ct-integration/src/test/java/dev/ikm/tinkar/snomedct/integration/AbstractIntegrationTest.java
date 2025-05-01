@@ -4,13 +4,19 @@ import dev.ikm.elk.snomed.SnomedOntology;
 import dev.ikm.elk.snomed.SnomedOntologyReasoner;
 import dev.ikm.elk.snomed.model.Concept;
 import dev.ikm.maven.SnomedUtility;
+import dev.ikm.tinkar.common.id.IntIds;
 import dev.ikm.tinkar.common.service.CachingService;
 import dev.ikm.tinkar.common.service.PluggableService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
+import dev.ikm.tinkar.coordinate.Coordinates;
+import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
+import dev.ikm.tinkar.coordinate.stamp.StateSet;
+import dev.ikm.tinkar.coordinate.view.ViewCoordinateRecord;
 import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculator;
+import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculatorWithCache;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedDataBuilder;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedReasonerService;
@@ -160,7 +166,7 @@ public abstract class AbstractIntegrationTest {
 
     public ElkSnomedData buildSnomedData() throws Exception {
         LOG.info("buildSnomedData");
-        ViewCalculator viewCalculator = PrimitiveDataTestUtil.getViewCalculator();
+        ViewCalculator viewCalculator = getViewCalculator();
         ElkSnomedData data = new ElkSnomedData();
         ElkSnomedDataBuilder builder = new ElkSnomedDataBuilder(viewCalculator,
                 TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN, data);
@@ -202,7 +208,7 @@ public abstract class AbstractIntegrationTest {
 		ReasonerService rs = PluggableService.load(ReasonerService.class).stream()
 				.filter(x -> x.type().getSimpleName().equals(ElkSnomedReasonerService.class.getSimpleName())) //
 				.findFirst().get().get();
-		rs.init(PrimitiveDataTestUtil.getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
+		rs.init(getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
 				TinkarTerm.EL_PLUS_PLUS_INFERRED_AXIOMS_PATTERN);
 		rs.setProgressUpdater(null);
 		return rs;
@@ -243,6 +249,21 @@ public abstract class AbstractIntegrationTest {
 		rs.buildNecessaryNormalForm();
 		return rs;
 	}
+
+    public ViewCalculator getViewCalculator() {
+        ViewCoordinateRecord vcr = Coordinates.View.DefaultView();
+        ViewCalculatorWithCache viewCalculator = ViewCalculatorWithCache.getCalculator(vcr);
+        return viewCalculator;
+    }
+
+    public ViewCalculator getViewCalculatorPrimordial() {
+        StampCoordinateRecord scr = StampCoordinateRecord.make(StateSet.ACTIVE_AND_INACTIVE,
+                Coordinates.Position.LatestOnDevelopment(), IntIds.set.of(TinkarTerm.PRIMORDIAL_MODULE.nid()));
+        ViewCoordinateRecord vcr = ViewCoordinateRecord.make(scr, Coordinates.Language.UsEnglishRegularName(), Coordinates.Logic.ElPlusPlus(),
+                Coordinates.Navigation.inferred(), Coordinates.Edit.Default());
+        ViewCalculatorWithCache viewCalculator = ViewCalculatorWithCache.getCalculator(vcr);
+        return viewCalculator;
+    }
     /**
      * ****************************************************************************************************
      * ****************************************************************************************************
