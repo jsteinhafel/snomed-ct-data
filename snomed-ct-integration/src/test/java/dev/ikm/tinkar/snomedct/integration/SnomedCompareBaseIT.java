@@ -43,9 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public abstract class ElkSnomedCompareTestBaseIT extends AbstractIntegrationTest {
+public class SnomedCompareBaseIT extends AbstractIntegrationTest {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ElkSnomedCompareTestBaseIT.class);
+	private static final Logger LOG = LoggerFactory.getLogger(SnomedCompareBaseIT.class);
 
 	public boolean compareEquals(Object expect, Object actual, String msg) {
 		if (Objects.equals(expect, actual))
@@ -123,7 +123,6 @@ public abstract class ElkSnomedCompareTestBaseIT extends AbstractIntegrationTest
 		LOG.info("\t" + axioms_file);
 		LOG.info("\t" + rels_file);
 
-
 		ElkSnomedData data = buildSnomedData();
 		{
 			Concept us_con = data.getConcept(ElkSnomedData.getNid(SnomedIds.us_nlm_module));
@@ -133,6 +132,7 @@ public abstract class ElkSnomedCompareTestBaseIT extends AbstractIntegrationTest
 				assertNull(us_con);
 			}
 		}
+
 		OwlElOntology ontology = new OwlElOntology();
 		ontology.load(axioms_file);
 		SnomedOntology snomedOntology = new OwlElTransformer().transform(ontology);
@@ -146,10 +146,12 @@ public abstract class ElkSnomedCompareTestBaseIT extends AbstractIntegrationTest
 				assertNull(us_con);
 			}
 		}
+
 		SnomedOntology dataOntology = new NidToSctid(data, snomedOntology).build();
 		dataOntology.setDescriptions(SnomedDescriptions.init(descriptions_file));
 		dataOntology.setNames();
 		ConceptComparer cc = new ConceptComparer(snomedOntology);
+
 		for (Concept concept : snomedOntology.getConcepts()) {
 			if (concept.getId() == SnomedIds.root) {
 				LOG.info("Skipping: " + concept);
@@ -162,6 +164,11 @@ public abstract class ElkSnomedCompareTestBaseIT extends AbstractIntegrationTest
 			;
 		}
 		assertEquals(0, cc.getMisMatchCount());
+	}
+
+	@Override
+	protected boolean assertLine(String[] columns) {
+		return false;
 	}
 
 }

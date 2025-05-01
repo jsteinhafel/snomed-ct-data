@@ -45,9 +45,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class ElkSnomedClassifierTestBaseIT extends AbstractIntegrationTest {
+public class SnomedClassifierBaseIT extends AbstractIntegrationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElkSnomedClassifierTestBaseIT.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SnomedClassifierBaseIT.class);
 
     @Test
     public void supercs() throws Exception {
@@ -113,7 +113,7 @@ public abstract class ElkSnomedClassifierTestBaseIT extends AbstractIntegrationT
                 assertTrue(parents.isEmpty());
                 // has a parent in the db
                 assertEquals(1, sups.size());
-                assertEquals(TinkarTerm.ROOT_VERTEX.nid(), reasoner.getSuperConcepts(nid).iterator().next());
+                assertEquals(TinkarTerm.PHENOMENON.nid(), reasoner.getSuperConcepts(nid).iterator().next());
                 continue;
             } else {
                 assertNotNull(parents);
@@ -169,6 +169,11 @@ public abstract class ElkSnomedClassifierTestBaseIT extends AbstractIntegrationT
         assertEquals(expected_miss_cnt, miss_cnt);
         assertEquals(expected_pharma_miss_cnt, pharma_miss_cnt);
         assertEquals(expected_other_miss_cnt, other_miss_cnt);
+    }
+
+    @Override
+    protected boolean assertLine(String[] columns) {
+        return false;
     }
 
 }
