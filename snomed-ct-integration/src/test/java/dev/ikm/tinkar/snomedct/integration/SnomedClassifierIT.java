@@ -1,3 +1,18 @@
+/*
+ * Copyright © 2015 Integrated Knowledge Management (support@ikm.dev)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package dev.ikm.tinkar.snomedct.integration;
 
 import dev.ikm.elk.snomed.SnomedDescriptions;
@@ -6,22 +21,18 @@ import dev.ikm.elk.snomed.SnomedIsa;
 import dev.ikm.elk.snomed.SnomedOntology;
 import dev.ikm.elk.snomed.SnomedOntologyReasoner;
 import dev.ikm.elk.snomed.model.Concept;
-import dev.ikm.tinkar.common.service.PluggableService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
-import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedReasonerService;
 import dev.ikm.tinkar.reasoner.service.ReasonerService;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SnomedClassifierIT extends AbstractIntegrationTest{
+public class SnomedClassifierIT extends AbstractIntegrationTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnomedClassifierIT.class);
 
@@ -65,10 +76,8 @@ public class SnomedClassifierIT extends AbstractIntegrationTest{
     @Test
     public void isas() throws Exception {
         String sourceFilePath = "../snomed-ct-origin/target/origin-sources";
-        Path axioms_file = Paths.get(findFilePath(sourceFilePath, "sct2_sRefset_OWLExpressionSnapshot_"));
         Path rels_file = Paths.get(findFilePath(sourceFilePath, "sct2_Relationship_Snapshot_"));
-        String descriptionFile = findFilePath(sourceFilePath, "sct2_Description_Snapshot-en");
-        Path descriptions_file = Paths.get(descriptionFile);
+        Path descriptions_file = Paths.get(findFilePath(sourceFilePath, "sct2_Description_Snapshot-en"));
 
         LOG.info("runSnomedReasoner");
         ElkSnomedData data = buildSnomedData();
@@ -162,80 +171,9 @@ public class SnomedClassifierIT extends AbstractIntegrationTest{
         assertEquals(expected_other_miss_cnt, other_miss_cnt);
     }
 
-    public ArrayList<String> getSupercs(ElkSnomedData data, SnomedOntologyReasoner reasoner) {
-        ArrayList<String> lines = new ArrayList<>();
-        for (Concept con : data.getConcepts()) {
-            int con_id = (int) con.getId();
-            String con_str = PrimitiveData.publicId(con_id).asUuidArray()[0] + "\t" + PrimitiveData.text(con_id);
-            for (Concept sup : reasoner.getSuperConcepts(con)) {
-                int sup_id = (int) sup.getId();
-                String sup_str = PrimitiveData.publicId(sup_id).asUuidArray()[0] + "\t" + PrimitiveData.text(sup_id);
-                lines.add(con_str + "\t" + sup_str);
-            }
-        }
-        Collections.sort(lines);
-        return lines;
-    }
-
-    public ArrayList<String> runSnomedReasoner() throws Exception {
-        ElkSnomedData data = buildSnomedData();
-        SnomedOntology ontology = new SnomedOntology(data.getConcepts(), data.getRoleTypes(), List.of());
-        SnomedOntologyReasoner reasoner = SnomedOntologyReasoner.create(ontology);
-        Files.createDirectories(getWritePath("supercs").getParent());
-        Path path = getWritePath("supercs");
-        ArrayList<String> lines = getSupercs(data, reasoner);
-        Files.write(path, lines);
-        return lines;
-    }
-
-    public ArrayList<String> runSnomedReasonerService() throws Exception {
-        LOG.info("runSnomedReasonerService");
-        ReasonerService rs = initReasonerService();
-        rs.extractData();
-        rs.loadData();
-        rs.computeInferences();
-        Files.createDirectories(getWritePath("supercs").getParent());
-        Path path = getWritePath("supercs");
-        ArrayList<String> lines = getSupercs(rs);
-        Files.write(path, lines);
-        return lines;
-    }
-
-    public ReasonerService initReasonerService() {
-        ReasonerService rs = PluggableService.load(ReasonerService.class).stream()
-                .filter(x -> x.type().getSimpleName().equals(ElkSnomedReasonerService.class.getSimpleName())) //
-                .findFirst().get().get();
-        rs.init(getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
-                TinkarTerm.EL_PLUS_PLUS_INFERRED_AXIOMS_PATTERN);
-        rs.setProgressUpdater(null);
-        return rs;
-    }
-
-    public ArrayList<String> getSupercs(ReasonerService rs) {
-        ArrayList<String> lines = new ArrayList<>();
-        for (int con_id : rs.getReasonerConceptSet().toArray()) {
-            String con_str = PrimitiveData.publicId(con_id).asUuidArray()[0] + "\t" + PrimitiveData.text(con_id);
-            for (int sup_id : rs.getParents(con_id).toArray()) {
-                String sup_str = PrimitiveData.publicId(sup_id).asUuidArray()[0] + "\t" + PrimitiveData.text(sup_id);
-                lines.add(con_str + "\t" + sup_str);
-            }
-        }
-        Collections.sort(lines);
-        return lines;
-    }
-
-    public ReasonerService runReasonerServiceNNF() throws Exception {
-        LOG.info("runReasonerServiceNNF");
-        ReasonerService rs = initReasonerService();
-        rs.extractData();
-        rs.loadData();
-        rs.computeInferences();
-        rs.buildNecessaryNormalForm();
-        return rs;
-    }
-
     @Override
     protected boolean assertLine(String[] columns) {
         return false;
     }
+
 }

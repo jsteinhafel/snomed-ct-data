@@ -1,17 +1,26 @@
 package dev.ikm.tinkar.snomedct.integration;
 
+import dev.ikm.elk.snomed.SnomedOntology;
+import dev.ikm.elk.snomed.SnomedOntologyReasoner;
+import dev.ikm.elk.snomed.model.Concept;
 import dev.ikm.maven.SnomedUtility;
+import dev.ikm.tinkar.common.id.IntIds;
 import dev.ikm.tinkar.common.service.CachingService;
+import dev.ikm.tinkar.common.service.PluggableService;
 import dev.ikm.tinkar.common.service.PrimitiveData;
 import dev.ikm.tinkar.common.service.ServiceKeys;
 import dev.ikm.tinkar.common.service.ServiceProperties;
 import dev.ikm.tinkar.common.util.uuid.UuidUtil;
 import dev.ikm.tinkar.coordinate.Coordinates;
+import dev.ikm.tinkar.coordinate.stamp.StampCoordinateRecord;
+import dev.ikm.tinkar.coordinate.stamp.StateSet;
 import dev.ikm.tinkar.coordinate.view.ViewCoordinateRecord;
 import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculator;
 import dev.ikm.tinkar.coordinate.view.calculator.ViewCalculatorWithCache;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedData;
 import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedDataBuilder;
+import dev.ikm.tinkar.reasoner.elksnomed.ElkSnomedReasonerService;
+import dev.ikm.tinkar.reasoner.service.ReasonerService;
 import dev.ikm.tinkar.terms.TinkarTerm;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,11 +36,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 public abstract class AbstractIntegrationTest {
-    Logger log = LoggerFactory.getLogger(AbstractIntegrationTest.class);
+    Logger LOG = LoggerFactory.getLogger(AbstractIntegrationTest.class);
 
     protected static int stated_count = -1;
     protected static int active_count = -1;
@@ -133,7 +144,7 @@ public abstract class AbstractIntegrationTest {
                 }
             }
         }
-        log.info("We found file: " + sourceFilePath);
+        LOG.info("We found file: " + sourceFilePath);
         return notFound;
     }
 
@@ -143,9 +154,18 @@ public abstract class AbstractIntegrationTest {
 
 
     /**
-     * Methods used within classes SnomedDataBuilderIT, SnomedCompareIT, SnomedClassifierIT
+     * ****************************************************************************************************
+     * CODE OBTAINED FROM ElkSnomedTestBase.java / reasoner-elk-snomed module / tinkar-core repo
      */
-    protected ElkSnomedData buildSnomedData() throws Exception {
+    protected Path getWritePath(String filePart) throws IOException {
+        Path path = Paths.get("target", filePart + ".txt");
+        LOG.info("Write path: " + path);
+        Files.createDirectories(path.getParent());
+        return path;
+    }
+
+    public ElkSnomedData buildSnomedData() throws Exception {
+        LOG.info("buildSnomedData");
         ViewCalculator viewCalculator = getViewCalculator();
         ElkSnomedData data = new ElkSnomedData();
         ElkSnomedDataBuilder builder = new ElkSnomedDataBuilder(viewCalculator,
@@ -154,17 +174,100 @@ public abstract class AbstractIntegrationTest {
         return data;
     }
 
-    protected Path getWritePath(String filePart) throws IOException {
-        Path path = Paths.get("target", filePart + ".txt");
-        Files.createDirectories(path.getParent());
-        return path;
+    public ArrayList<String> getSupercs(ElkSnomedData data, SnomedOntologyReasoner reasoner) {
+        ArrayList<String> lines = new ArrayList<>();
+        for (Concept con : data.getConcepts()) {
+            int con_id = (int) con.getId();
+            String con_str = PrimitiveData.publicId(con_id).asUuidArray()[0] + "\t" + PrimitiveData.text(con_id);
+            for (Concept sup : reasoner.getSuperConcepts(con)) {
+                int sup_id = (int) sup.getId();
+                String sup_str = PrimitiveData.publicId(sup_id).asUuidArray()[0] + "\t" + PrimitiveData.text(sup_id);
+                lines.add(con_str + "\t" + sup_str);
+            }
+        }
+        Collections.sort(lines);
+        return lines;
     }
 
-    protected ViewCalculator getViewCalculator() {
+    public ArrayList<String> runSnomedReasoner() throws Exception {
+        LOG.info("runSnomedReasoner");
+        ElkSnomedData data = buildSnomedData();
+        LOG.info("Create ontology");
+        SnomedOntology ontology = new SnomedOntology(data.getConcepts(), data.getRoleTypes(),
+                data.getConcreteRoleTypes());
+        LOG.info("Create reasoner");
+        SnomedOntologyReasoner reasoner = SnomedOntologyReasoner.create(ontology);
+        Files.createDirectories(getWritePath("supercs").getParent());
+        Path path = getWritePath("supercs");
+        ArrayList<String> lines = getSupercs(data, reasoner);
+        Files.write(path, lines);
+        return lines;
+    }
+
+	public ReasonerService initReasonerService() {
+		ReasonerService rs = PluggableService.load(ReasonerService.class).stream()
+				.filter(x -> x.type().getSimpleName().equals(ElkSnomedReasonerService.class.getSimpleName())) //
+				.findFirst().get().get();
+		rs.init(getViewCalculator(), TinkarTerm.EL_PLUS_PLUS_STATED_AXIOMS_PATTERN,
+				TinkarTerm.EL_PLUS_PLUS_INFERRED_AXIOMS_PATTERN);
+		rs.setProgressUpdater(null);
+		return rs;
+	}
+
+    public ArrayList<String> getSupercs(ReasonerService rs) {
+        ArrayList<String> lines = new ArrayList<>();
+        for (int con_id : rs.getReasonerConceptSet().toArray()) {
+            String con_str = PrimitiveData.publicId(con_id).asUuidArray()[0] + "\t" + PrimitiveData.text(con_id);
+            for (int sup_id : rs.getParents(con_id).toArray()) {
+                String sup_str = PrimitiveData.publicId(sup_id).asUuidArray()[0] + "\t" + PrimitiveData.text(sup_id);
+                lines.add(con_str + "\t" + sup_str);
+            }
+        }
+        Collections.sort(lines);
+        return lines;
+    }
+
+	public ArrayList<String> runSnomedReasonerService() throws Exception {
+		LOG.info("runSnomedReasonerService");
+		ReasonerService rs = initReasonerService();
+		rs.extractData();
+		rs.loadData();
+		rs.computeInferences();
+		Files.createDirectories(getWritePath("supercs").getParent());
+		Path path = getWritePath("supercs");
+		ArrayList<String> lines = getSupercs(rs);
+		Files.write(path, lines);
+		return lines;
+	}
+
+	public ReasonerService runReasonerServiceNNF() throws Exception {
+		LOG.info("runReasonerServiceNNF");
+		ReasonerService rs = initReasonerService();
+		rs.extractData();
+		rs.loadData();
+		rs.computeInferences();
+		rs.buildNecessaryNormalForm();
+		return rs;
+	}
+
+    public ViewCalculator getViewCalculator() {
         ViewCoordinateRecord vcr = Coordinates.View.DefaultView();
-
-        return ViewCalculatorWithCache.getCalculator(vcr);
+        ViewCalculatorWithCache viewCalculator = ViewCalculatorWithCache.getCalculator(vcr);
+        return viewCalculator;
     }
+
+    public ViewCalculator getViewCalculatorPrimordial() {
+        StampCoordinateRecord scr = StampCoordinateRecord.make(StateSet.ACTIVE_AND_INACTIVE,
+                Coordinates.Position.LatestOnDevelopment(), IntIds.set.of(TinkarTerm.PRIMORDIAL_MODULE.nid()));
+        ViewCoordinateRecord vcr = ViewCoordinateRecord.make(scr, Coordinates.Language.UsEnglishRegularName(), Coordinates.Logic.ElPlusPlus(),
+                Coordinates.Navigation.inferred(), Coordinates.Edit.Default());
+        ViewCalculatorWithCache viewCalculator = ViewCalculatorWithCache.getCalculator(vcr);
+        return viewCalculator;
+    }
+    /**
+     * ****************************************************************************************************
+     * ****************************************************************************************************
+     */
 
     protected abstract boolean assertLine(String[] columns);
 }
