@@ -30,11 +30,11 @@
                             <goal>generate-java-binding</goal>
                         </goals>
                         <configuration>
-                            <bindingOutputFile>${user.home}/Solor/TestBinding.java</bindingOutputFile>
+                            <bindingOutputFile>${dataStoreLocation}/TestBinding.java</bindingOutputFile>
                             <author>Binding Test Author</author>
                             <packageName>dev.ikm.tinkar.binding.test</packageName>
                             <namespace>f3051292-ce74-4b2c-b70c-b190594d0532</namespace>
-			                <dataStore>${user.home}/Solor/generated-data</dataStore>
+			                <dataStore>${dataStoreLocation}/${dataStore}</dataStore>
                             <characterReplacements>
                                 <characterReplacement>
                                     <character>+</character>

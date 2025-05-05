@@ -76,7 +76,7 @@
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
-                        <datastorePath>${user.home}/Solor/generated-data</datastorePath>
+                        <datastorePath>${dataStoreLocation}/${dataStore}</datastorePath>
                     </systemPropertyVariables>
                     <argLine>-Xmx8g</argLine>
                 </configuration>
