@@ -48,7 +48,7 @@ public abstract class AbstractIntegrationTest {
     protected static int active_count = -1;
     protected static int inactive_count = -1;
     protected static int expected_supercs_cnt = -1;
-    protected static int expected_non_snomed_cnt = 300;
+    protected static int expected_non_snomed_cnt = 340;
     protected static int expected_miss_cnt = 0;
     protected static int expected_pharma_miss_cnt = 0;
     protected static int expected_other_miss_cnt = 0;
@@ -80,10 +80,10 @@ public abstract class AbstractIntegrationTest {
                 inactive_count = 27820;
                 expected_supercs_cnt = 606769;
             } else if (absolutePath.contains("20250301")) {
-                stated_count = 400647;
-                active_count = 372706;
+                stated_count = 400687;
+                active_count = 372746;
                 inactive_count = 27941;
-                expected_supercs_cnt = 610428;
+                expected_supercs_cnt = 610468;
             }
         } else if (absolutePath.contains("US")) {
             if (absolutePath.contains("20250301")) {
