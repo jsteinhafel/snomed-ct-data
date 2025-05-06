@@ -39,7 +39,7 @@
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <!-- origin -->
         <origin.working.directory>${project.build.directory}/origin-sources</origin.working.directory>
-        <source.version>20250301T120000Z</source.version>
+        <source.version>20250501T120000Z</source.version>
         <source.zip>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_${source.version}.zip</source.zip>
         <starterSetLocation>${user.home}/Downloads</starterSetLocation>
         <starterSet>FieldCategories-nonprimordial-unreasoned-pb.zip</starterSet>

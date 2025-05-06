@@ -20,9 +20,9 @@
         <data-artifact.groupId>dev.ikm.tinkar.data</data-artifact.groupId>
         <data-artifact.artifactId>snomedct-international</data-artifact.artifactId>
         <data-artifact.filename>${data-artifact.path-prefix}-data.zip</data-artifact.filename>
-        <data-artifact.version>${source.version}-1.0.12</data-artifact.version>
+        <data-artifact.version>${source.version}-1.0.13</data-artifact.version>
         <data-artifact.prefix>${project.artifactId}-${project.version}</data-artifact.prefix>
-        <data-artifact.path-prefix>${project.basedir}/${data-artifact.prefix}</data-artifact.path-prefix>
+        <data-artifact.path-prefix>${project.build.directory}/${data-artifact.prefix}</data-artifact.path-prefix>
         <deploymentFiles>${project.basedir}/pom.xml</deploymentFiles>
         <deploymentClassifiers>reasoned-sa</deploymentClassifiers>
         <deploymentTypes>xml</deploymentTypes>
