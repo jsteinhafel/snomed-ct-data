@@ -39,7 +39,8 @@
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
         <!-- origin -->
         <origin.working.directory>${project.build.directory}/origin-sources</origin.working.directory>
-        <source.zip>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_20250301T120000Z.zip</source.zip>
+        <source.version>20250301T120000Z</source.version>
+        <source.zip>${user.home}/Downloads/SnomedCT_InternationalRF2_PRODUCTION_${source.version}.zip</source.zip>
         <starterSetLocation>${user.home}/Downloads</starterSetLocation>
         <starterSet>FieldCategories-nonprimordial-unreasoned-pb.zip</starterSet>
         <dataStoreLocation>${project.basedir}/../target</dataStoreLocation>
@@ -191,6 +192,12 @@
                     <groupId>dev.ikm.maven</groupId>
                     <artifactId>snomed-ct-starterdata-maven-plugin</artifactId>
                     <version>1.0.0-SNAPSHOT</version>
+                </plugin>
+                <!-- Skip Staging Plugin -->
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <inherited>false</inherited>
                 </plugin>
             </plugins>
         </pluginManagement>
